@@ -6,8 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Send, Mail, Phone, HeadphonesIcon, Upload, X, FileText, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
-
+7
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Namn krävs").max(100, "Namn får max vara 100 tecken"),
   email: z.string().trim().email("Ogiltig e-postadress").max(255, "E-post får max vara 255 tecken"),
@@ -50,79 +49,24 @@ const Contact = () => {
     setSelectedFile(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    
-    const result = contactSchema.safeParse(formData);
-    if (!result.success) {
-      const fieldErrors: { name?: string; email?: string; phone?: string; company?: string; message?: string } = {};
-      result.error.errors.forEach((err) => {
-        if (err.path[0]) {
-          fieldErrors[err.path[0] as keyof typeof fieldErrors] = err.message;
-        }
-      });
-      setErrors(fieldErrors);
-      return;
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
 
-    setIsSubmitting(true);
-    
-    try {
-      let filePath: string | undefined;
+  const subject = `Kontaktförfrågan från ${formData.name}`;
 
-      // Upload file if selected
-      if (selectedFile) {
-        setIsUploading(true);
-        const fileExt = selectedFile.name.split(".").pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from("procurement-docs")
-          .upload(fileName, selectedFile);
+  const body = `
+Namn: ${formData.name}
+E-post: ${formData.email}
+Telefon: ${formData.phone || "-"}
+Företag: ${formData.company || "-"}
 
-        if (uploadError) {
-          throw new Error("Kunde inte ladda upp filen");
-        }
-        filePath = fileName;
-        setIsUploading(false);
-      }
+Meddelande:
+${formData.message}
+  `;
 
-      const { data, error } = await supabase.functions.invoke("send-contact-form", {
-        body: {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || undefined,
-          company: formData.company || undefined,
-          message: formData.message,
-          filePath: filePath,
-          fileName: selectedFile?.name,
-        },
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: "Tack för din förfrågan! 🎉",
-        description: "Vi återkommer till dig så snart som möjligt för att boka möte.",
-      });
-      
-      setFormData({ name: "", email: "", phone: "", company: "", message: "" });
-      setSelectedFile(null);
-    } catch (error) {
-      console.error("Error sending contact form:", error);
-      toast({
-        title: "Något gick fel",
-        description: "Försök igen eller kontakta oss direkt via telefon.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-      setIsUploading(false);
-    }
-  };
+  window.location.href =
+    `mailto:info@compartners.se?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
 
   const contactInfo = [
     {
@@ -198,7 +142,7 @@ const Contact = () => {
             </div>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="name" className="font-medium">
+                <Label htmlFor="name" className="font-medium text-foreground">
                   Namn *
                 </Label>
                 <Input
@@ -206,14 +150,14 @@ const Contact = () => {
                   placeholder="Ditt namn"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="h-12 rounded-xl border-border focus:border-primary"
+                  className="h-12 rounded-xl border-border text-foreground focus:border-primary"
                   maxLength={100}
                 />
                 {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="font-medium">
+                <Label htmlFor="email" className="font-medium text-foreground">
                   E-post *
                 </Label>
                 <Input
@@ -222,14 +166,14 @@ const Contact = () => {
                   placeholder="din@email.se"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="h-12 rounded-xl border-border focus:border-primary"
+                  className="h-12 rounded-xl border-border text-foreground focus:border-primary"
                   maxLength={255}
                 />
                 {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone" className="font-medium">
+                <Label htmlFor="phone" className="font-medium text-foreground">
                   Telefon <span className="text-muted-foreground font-normal">(om du vill bli uppringd)</span>
                 </Label>
                 <Input
@@ -238,14 +182,14 @@ const Contact = () => {
                   placeholder="070-123 45 67"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="h-12 rounded-xl border-border focus:border-primary"
+                  className="h-12 rounded-xl border-border text-foreground focus:border-primary"
                   maxLength={20}
                 />
                 {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company" className="font-medium">
+                <Label htmlFor="company" className="font-medium text-foreground">
                   Företag
                 </Label>
                 <Input
@@ -253,13 +197,13 @@ const Contact = () => {
                   placeholder="Ert företagsnamn"
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                  className="h-12 rounded-xl border-border focus:border-primary"
+                  className="h-12 rounded-xl border-border text-foreground focus:border-primary"
                   maxLength={100}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message" className="font-medium">
+                <Label htmlFor="message" className="font-medium text-foreground">
                   Meddelande *
                 </Label>
                 <Textarea
@@ -268,7 +212,7 @@ const Contact = () => {
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="rounded-xl border-border focus:border-primary resize-none"
+                  className="rounded-xl border-border text-foreground focus:border-primary resize-none"
                   maxLength={1000}
                 />
                 {errors.message && <p className="text-sm text-destructive">{errors.message}</p>}
@@ -276,7 +220,7 @@ const Contact = () => {
 
               {/* File Upload */}
               <div className="space-y-2">
-                <Label className="font-medium">
+                <Label className="font-medium text-foreground">
                   Upphandlingsunderlag <span className="text-muted-foreground font-normal">(valfritt)</span>
                 </Label>
                 {selectedFile ? (
