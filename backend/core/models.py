@@ -1,38 +1,27 @@
 from django.db import models
-
+from decimal import Decimal
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
-
     company_code = models.CharField(
         max_length=50,
         unique=True,
         db_index=True,
         help_text="Nyckeln kunden loggar in med.",
     )
-
-    organization_number = models.CharField(
-        max_length=20,
-        blank=True,
-    )
-
+    organization_number = models.CharField(max_length=20, blank=True)
     price_markup = models.DecimalField(
         max_digits=6,
         decimal_places=2,
         default=0,
     )
-
-    has_phone_policy = models.BooleanField(
-        default=False,
-    )
-
+    has_phone_policy = models.BooleanField(default=False)
     allowed_phones = models.ManyToManyField(
         "Product",
         blank=True,
         related_name="allowed_for_companies",
         limit_choices_to={"product_type": "phone"},
     )
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -43,6 +32,13 @@ class Company(models.Model):
 
     def __str__(self):
         return self.name
+
+    def calculate_price(self, base_price: Decimal) -> Decimal:
+        """Beräknar pris med företagets påslag."""
+        if self.price_markup and self.price_markup > 0:
+            multiplier = Decimal("1.00") + (self.price_markup / Decimal("100"))
+            return round(base_price * multiplier, 2)
+        return base_price
 
 
 class Product(models.Model):
