@@ -8,6 +8,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
 import SwitchboardPanel from "@/components/SwitchboardPanel";
+import SwitchboardPanel1 from "@/components/SwitchboardPanel1";
 
 const Index = () => {
   return (
@@ -28,8 +29,11 @@ const Index = () => {
       <main>
         <Hero />
         <SwitchboardPanel/>
+                <Services />
+
+        <SwitchboardPanel1/>
+
         <Stats />
-        <Services />
         <Testimonials />
         <Contact />
       </main>

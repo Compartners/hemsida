@@ -1,7 +1,7 @@
-import { Check, X } from "lucide-react";
+import { Check, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Product } from "./types";
-import { formatPrice } from "./utils"
+import { formatPrice } from "./utils";
 
 type ProductCardProps = {
   product: Product;
@@ -10,66 +10,84 @@ type ProductCardProps = {
 
 export function ProductCard({ product, onAdd }: ProductCardProps) {
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-shadow hover:shadow-lifted">
-      <div className="relative flex h-44 items-center justify-center bg-muted/60 p-4">
+    <article className="group flex flex-col overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+      
+      {/* Bildcontainer med tonad bakgrund och mix-blend för vita bilder */}
+      <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-zinc-50/80 p-5 dark:bg-zinc-900/40">
         {product.image ? (
           <img
             src={product.image}
             alt={product.name}
             loading="lazy"
-            className="h-full w-auto object-contain"
+            className="h-full w-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105 dark:mix-blend-normal"
           />
         ) : (
-          <span className="font-display text-4xl font-semibold text-foreground/40">
-            {product.brand}
+          <span className="font-display text-2xl font-bold tracking-tight text-muted-foreground/30">
+            {product.brand || "ComPartners"}
           </span>
         )}
+
+        {/* Lagerstatus-badge i bildens hörn */}
+        <div className="absolute top-2.5 right-2.5">
+          {product.stock ? (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+              <Check className="h-3 w-3" />
+              I lager
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2 py-0.5 text-[11px] font-medium text-rose-600 dark:text-rose-400">
+              <X className="h-3 w-3" />
+              Slut
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
-        <p className="text-xs uppercase tracking-wider text-foreground">{product.brand}</p>
-        <h3 className="mt-1 font-semibold leading-snug text-foreground">{product.name}</h3>
+      {/* Kortinnehåll */}
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          {product.brand}
+        </p>
 
-        <ul className="mt-3 flex-1 space-y-1 text-sm text-foreground">
-          {product.bullets.length > 0 ? (
-            product.bullets.map((bullet) => (
-              <li key={bullet} className="flex gap-2">
-                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+        <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-foreground" title={product.name}>
+          {product.name}
+        </h3>
+
+        {/* Egenskaper / Kulpunkter */}
+        <ul className="mt-3 flex-1 space-y-1 text-xs text-muted-foreground">
+          {product.bullets && product.bullets.length > 0 ? (
+            product.bullets.slice(0, 2).map((bullet, idx) => (
+              <li key={idx} className="line-clamp-1 flex items-center gap-1.5">
+                <span className="h-1 w-1 shrink-0 rounded-full bg-primary/80" aria-hidden="true" />
                 {bullet}
               </li>
             ))
           ) : (
-            <li className="text-xs text-foreground">Produktinformation saknas</li>
+            <li className="text-[11px] text-muted-foreground/70">Originalprodukt</li>
           )}
         </ul>
 
-        <div className="mt-4 flex items-end justify-between gap-3">
+        {/* Pris & Köpknapp */}
+        <div className="mt-4 flex items-center justify-between gap-2 border-t border-border/50 pt-3">
           <div>
-            <p className="font-display text-lg font-semibold text-foreground">
+            <p className="font-display text-base font-bold text-foreground sm:text-lg">
               {formatPrice(product.price)}
             </p>
-            <p className="text-xs text-foreground">exkl. moms</p>
+            <p className="text-[10px] text-muted-foreground">exkl. moms</p>
           </div>
 
-          <Button size="sm" disabled={!product.stock} onClick={() => onAdd(product)}>
-            {product.stock ? "Lägg i varukorg" : "Bevaka"}
+          <Button
+            size="sm"
+            disabled={!product.stock}
+            onClick={() => onAdd(product)}
+            className="h-8 gap-1 px-3 text-xs"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            {product.stock ? "Köp" : "Slut"}
           </Button>
         </div>
-
-        <p className="mt-3 flex items-center gap-1.5 text-xs text-foreground">
-          {product.stock ? (
-            <>
-              <Check className="h-3.5 w-3.5 rounded-full bg-green-500 text-primary" aria-hidden="true" />
-              I lager
-            </>
-          ) : (
-            <>
-              <X className="h-3.5 w-3.5 rounded-full bg-red-500 text-background" aria-hidden="true" />
-              Tillfälligt slut
-            </>
-          )}
-        </p>
       </div>
+
     </article>
   );
 }

@@ -1,6 +1,5 @@
 const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "http://127.0.0.1:8000/api";
+  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
 
 let csrfToken: string | null = null;
 
@@ -14,6 +13,7 @@ export type ApiProduct = {
   external_id: string;
   product_type: "phone" | "accessory";
   base_price: string | number;
+  price?: string | number; // Kund-/utpris från Django
   brand: string;
   gtin: string;
   mpn: string;
@@ -42,22 +42,17 @@ export type CompanyLoginResponse = {
    ============================================================ */
 
 async function getCsrfToken(): Promise<string> {
-  const response = await fetch(
-    `${API_URL}/auth/csrf/`,
-    {
-      method: "GET",
-      credentials: "include",
-    },
-  );
+  const response = await fetch(`${API_URL}/auth/csrf/`, {
+    method: "GET",
+    credentials: "include",
+  });
 
   if (!response.ok) {
     throw new Error("Kunde inte hämta CSRF-token.");
   }
 
   const data = await response.json();
-
   csrfToken = data.csrfToken;
-
   return csrfToken;
 }
 
@@ -67,13 +62,13 @@ async function getCsrfToken(): Promise<string> {
 
 function isUnsafeMethod(method?: string) {
   return ["POST", "PUT", "PATCH", "DELETE"].includes(
-    (method || "GET").toUpperCase(),
+    (method || "GET").toUpperCase()
   );
 }
 
 async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {},
+  options: RequestInit = {}
 ): Promise<T> {
   const method = (options.method || "GET").toUpperCase();
 
@@ -91,40 +86,29 @@ async function apiFetch<T>(
     headers.set("X-CSRFToken", csrfToken);
   }
 
-  const response = await fetch(
-    `${API_URL}${endpoint}`,
-    {
-      ...options,
-      method,
-      credentials: "include",
-      headers,
-    },
-  );
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    method,
+    credentials: "include",
+    headers,
+  });
 
   if (response.status === 403) {
     const text = await response.text();
-
     if (text.toLowerCase().includes("csrf")) {
       csrfToken = null;
     }
-
-    throw new Error(
-      "CSRF-valideringen misslyckades.",
-    );
+    throw new Error("CSRF-valideringen misslyckades.");
   }
 
-  const contentType =
-    response.headers.get("content-type");
-
+  const contentType = response.headers.get("content-type");
   const data = contentType?.includes("application/json")
     ? await response.json()
     : null;
 
   if (!response.ok) {
     throw new Error(
-      data?.detail ||
-        data?.message ||
-        "Något gick fel.",
+      data?.detail || data?.message || "Något gick fel."
     );
   }
 
@@ -139,33 +123,23 @@ export async function initializeCsrf() {
   return getCsrfToken();
 }
 
-export async function companyLogin(
-  companyCode: string,
-) {
-  return apiFetch<CompanyLoginResponse>(
-    "/company/login/",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        company_code: companyCode,
-      }),
-    },
-  );
+export async function companyLogin(companyCode: string) {
+  return apiFetch<CompanyLoginResponse>("/company/login/", {
+    method: "POST",
+    body: JSON.stringify({
+      company_code: companyCode,
+    }),
+  });
 }
 
 export async function companyLogout() {
-  return apiFetch<{ detail: string }>(
-    "/company/logout/",
-    {
-      method: "POST",
-    },
-  );
+  return apiFetch<{ detail: string }>("/company/logout/", {
+    method: "POST",
+  });
 }
 
 export async function getCompany() {
-  return apiFetch<ApiCompany>(
-    "/company/me/",
-  );
+  return apiFetch<ApiCompany>("/company/me/");
 }
 
 /* ============================================================
@@ -173,9 +147,7 @@ export async function getCompany() {
    ============================================================ */
 
 export async function getProducts() {
-  return apiFetch<ApiProduct[]>(
-    "/products/",
-  );
+  return apiFetch<ApiProduct[]>("/products/");
 }
 
 /* ============================================================
@@ -183,7 +155,60 @@ export async function getProducts() {
    ============================================================ */
 
 export async function getCompanyPhones() {
-  return apiFetch<ApiProduct[]>(
-    "/company/phones/",
-  );
+  return apiFetch<ApiProduct[]>("/company/phones/");
+}
+
+
+/* ============================================================
+   COMPANY ORDERS
+   ============================================================ */
+export type ApiOrderItem = {
+  id: number;
+  product: {
+    id: number;
+    name: string;
+    brand?: string;
+    image_url?: string;
+  };
+  quantity: number;
+  unit_price: string | number;
+  line_total?: string | number;
+};
+
+export type ApiOrder = {
+  id: number;
+  order_number?: string;
+  created_at: string;
+  status?: string;
+  ordered_by: string;
+  organization_number: string;
+  comment?: string;
+  total_amount?: string | number;
+  items: ApiOrderItem[];
+};
+
+export async function getCompanyOrders() {
+  return apiFetch<ApiOrder[]>("/company/orders/");
+}
+
+
+export type CreateOrderItemPayload = {
+  product_id?: number;
+  product?: number;
+  quantity: number;
+  unit_price: number;
+};
+
+export type CreateOrderPayload = {
+  ordered_by: string;
+  organization_number?: string;
+  comment?: string;
+  items: CreateOrderItemPayload[];
+};
+
+export async function createOrder(payload: CreateOrderPayload) {
+  return apiFetch("/company/orders/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }

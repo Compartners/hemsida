@@ -1,5 +1,9 @@
+from decimal import Decimal, ROUND_HALF_UP
 from django.db import models
-from decimal import Decimal
+
+from decimal import Decimal, ROUND_HALF_UP
+from django.db import models
+
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
@@ -11,16 +15,21 @@ class Company(models.Model):
     )
     organization_number = models.CharField(max_length=20, blank=True)
     price_markup = models.DecimalField(
-        max_digits=6,
+        max_digits=10,
         decimal_places=2,
-        default=0,
+        default=Decimal("0.00"),
+        help_text="Fast påslag i kronor (SEK) per produkt (t.ex. 250.00).",
     )
-    has_phone_policy = models.BooleanField(default=False)
+    has_phone_policy = models.BooleanField(
+        default=False,
+        verbose_name="Har sortimentspolicy",
+        help_text="Om aktiv visas endast de produkter som valts nedan.",
+    )
     allowed_phones = models.ManyToManyField(
         "Product",
         blank=True,
         related_name="allowed_for_companies",
-        limit_choices_to={"product_type": "phone"},
+        verbose_name="Valt sortiment (telefoner & tillbehör)",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -33,12 +42,25 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
-    def calculate_price(self, base_price: Decimal) -> Decimal:
-        """Beräknar pris med företagets påslag."""
-        if self.price_markup and self.price_markup > 0:
-            multiplier = Decimal("1.00") + (self.price_markup / Decimal("100"))
-            return round(base_price * multiplier, 2)
-        return base_price
+    def calculate_price(self, product_or_price) -> Decimal:
+        """
+        Beräknar slutpris för kunden baserat på utpris/inköpspris + fast påslag i kronor.
+        Hanterar både Product-instans och råa Decimal-värden.
+        """
+        if hasattr(product_or_price, "price"):
+            target_price = (
+                product_or_price.price
+                if product_or_price.price is not None
+                else product_or_price.base_price
+            )
+        else:
+            target_price = Decimal(str(product_or_price))
+
+        if self.price_markup and self.price_markup > Decimal("0.00"):
+            final_price = target_price + self.price_markup
+            return final_price.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+        return target_price.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 
 class Product(models.Model):
@@ -52,12 +74,23 @@ class Product(models.Model):
     product_type = models.CharField(
         max_length=20, choices=PRODUCT_TYPE_CHOICES, default="phone", db_index=True
     )
-    base_price = models.DecimalField(max_digits=10, decimal_places=2)
+    base_price = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        help_text="Inköps-/feedpris från leverantören."
+    )
+    price = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        null=True, 
+        blank=True,
+        help_text="Ditt grundläggande utpris (t.ex. inköp x 0.8)."
+    )
     brand = models.CharField(max_length=100, blank=True)
     gtin = models.CharField(max_length=50, blank=True)
     mpn = models.CharField(max_length=100, blank=True)
-    image_url = models.URLField(blank=True)
-    product_url = models.URLField(blank=True)
+    image_url = models.URLField(max_length=2000, blank=True)
+    product_url = models.URLField(max_length=2000, blank=True)
     availability = models.CharField(max_length=50, blank=True)
     active = models.BooleanField(default=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -69,7 +102,7 @@ class Product(models.Model):
         ordering = ["name"]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.price or self.base_price} SEK)"
 
 
 class Order(models.Model):

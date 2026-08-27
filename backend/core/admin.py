@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.utils.crypto import get_random_string
-
+from decimal import Decimal, ROUND_HALF_UP
+from django.db.models import F
 from .models import Company, Product, Order, OrderItem
+
 
 
 @admin.register(Company)
@@ -48,11 +50,64 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "brand", "product_type", "base_price", "availability", "active")
+    list_display = (
+        "name", "brand", "product_type", "base_price", "price", "availability", "active"
+    )
     search_fields = ("name", "external_id", "brand", "gtin", "mpn")
     list_filter = ("product_type", "active", "availability", "brand")
-    list_editable = ("active",)
-    readonly_fields = ("created_at", "updated_at")
+    list_editable = ("price", "active")
+    list_per_page = 50
+
+    actions = [
+        "mark_as_phone",
+        "mark_as_accessory",
+        "set_price_equal_to_base",
+    ]
+
+    @admin.action(description="Sätt markerade som: Telefon (phone)")
+    def mark_as_phone(self, request, queryset):
+        count = queryset.update(product_type="phone")
+        self.message_user(request, f"Ändrade {count} produkter till Telefon.")
+
+    @admin.action(description="Sätt markerade som: Tillbehör (accessory)")
+    def mark_as_accessory(self, request, queryset):
+        count = queryset.update(product_type="accessory")
+        self.message_user(request, f"Ändrade {count} produkter till Tillbehör.")
+
+    @admin.action(description="Sätt utpris = Samma som inköpspris (base_price)")
+    def set_price_equal_to_base(self, request, queryset):
+        updated = queryset.update(price=F("base_price"))
+        self.message_user(request, f"Uppdaterade priset på {updated} produkter.")
+
+    @admin.action(description="Sätt utpris = Samma som inköpspris (base_price)")
+    def set_price_equal_to_base(self, request, queryset):
+        updated = queryset.update(price=F("base_price"))
+        self.message_user(request, f"Uppdaterade priset på {updated} produkter.")
+
+    @admin.action(description="Sätt utpris = Inköp x 1.20 (+20%% påslag)")
+    def set_price_markup_20_percent(self, request, queryset):
+        count = 0
+        for product in queryset:
+            if product.base_price:
+                product.price = (product.base_price * Decimal("1.20")).quantize(
+                    Decimal("0.01"), rounding=ROUND_HALF_UP
+                )
+                product.save(update_fields=["price"])
+                count += 1
+        self.message_user(request, f"Räknade om priset (+20 procent) på {count} produkter.")
+
+    @admin.action(description="Sätt utpris = Inköp x 0.80 (-20%% rabatt)")
+    def set_price_factor_0_8(self, request, queryset):
+        count = 0
+        for product in queryset:
+            if product.base_price:
+                product.price = (product.base_price * Decimal("0.80")).quantize(
+                    Decimal("0.01"), rounding=ROUND_HALF_UP
+                )
+                product.save(update_fields=["price"])
+                count += 1
+        self.message_user(request, f"Räknade om priset (x 0.80) på {count} produkter.")
+
 
 
 class OrderItemInline(admin.TabularInline):
@@ -83,3 +138,7 @@ class OrderAdmin(admin.ModelAdmin):
         ("Beställare", {"fields": ("organization_number", "ordered_by", "comment")}),
         ("Information", {"fields": ("created_at", "updated_at")}),
     )
+
+
+
+

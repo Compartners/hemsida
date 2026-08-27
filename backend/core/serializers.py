@@ -2,7 +2,7 @@
 from decimal import Decimal
 from rest_framework import serializers
 from .models import Company, Product, Order, OrderItem
-
+from .emails import send_order_notification_email
 
 # serializers.py
 from decimal import Decimal
@@ -55,7 +55,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
         if company:
             # Räknar ut påslaget för produkten
-            calculated = company.calculate_price(obj.base_price)
+            calculated = company.calculate_price(obj)
             return float(calculated)
 
         return float(obj.base_price)
@@ -154,40 +154,44 @@ class OrderSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        items_data = validated_data.pop("items")
-        request = self.context["request"]
-        company_id = request.session.get("company_id")
+        items_data = validated_data.pop("items", [])
+        org_nr_from_data = validated_data.pop("organization_number", None)
 
-        if not company_id:
-            raise serializers.ValidationError("Ingen inloggad företagskund hittades.")
+        request = self.context.get("request")
+        company = None
+        if request and request.session.get("company_id"):
+            company = Company.objects.filter(pk=request.session["company_id"]).first()
 
-        company = Company.objects.get(pk=company_id)
+        final_org_nr = (
+            company.organization_number
+            if company and company.organization_number
+            else (org_nr_from_data or "")
+        )
 
+        # 1. Skapa ordern
         order = Order.objects.create(
             company=company,
-            organization_number=company.organization_number,
+            organization_number=final_org_nr,
             **validated_data,
         )
 
+        # 2. Skapa artiklarna
         for item_data in items_data:
-            product = item_data["product"]
-
-            if company.has_phone_policy and product.product_type == "phone":
-                if not company.allowed_phones.filter(pk=product.pk).exists():
-                    raise serializers.ValidationError(
-                        {
-                            "items": f"{product.name} är inte tillåten för detta företag."
-                        }
-                    )
-
-            # Sätter korrekt enhetspris med företagets påslag
-            actual_unit_price = company.calculate_price(product.base_price)
+            product = item_data.get("product") or item_data.get("product_id")
+            if isinstance(product, int):
+                product = Product.objects.get(pk=product)
 
             OrderItem.objects.create(
                 order=order,
                 product=product,
-                quantity=item_data["quantity"],
-                unit_price=actual_unit_price,
+                quantity=item_data.get("quantity", 1),
+                unit_price=item_data.get("unit_price", product.price or product.base_price),
             )
+
+        # 3. Skicka ordernotis-mailet till er (med try/except så ordern inte kraschar om SMTP temporärt strular)
+        try:
+            send_order_notification_email(order)
+        except Exception as e:
+            logger.error(f"Kunde inte skicka ordermail för order #{order.id}: {e}")
 
         return order

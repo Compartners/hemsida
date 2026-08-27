@@ -2,12 +2,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from django.middleware.csrf import get_token
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.middleware.csrf import get_token
 
 from .models import Company, Product, Order
 from .serializers import (
@@ -25,6 +25,7 @@ class CsrfTokenView(APIView):
             "csrfToken": get_token(request),
         })
 
+
 # ============================================================
 # ADMIN AUTH
 # ============================================================
@@ -38,9 +39,7 @@ class AdminLoginView(APIView):
 
         if not username or not password:
             return Response(
-                {
-                    "detail": "Användarnamn och lösenord krävs."
-                },
+                {"detail": "Användarnamn och lösenord krävs."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -52,17 +51,13 @@ class AdminLoginView(APIView):
 
         if user is None:
             return Response(
-                {
-                    "detail": "Felaktigt användarnamn eller lösenord."
-                },
+                {"detail": "Felaktigt användarnamn eller lösenord."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
         if not user.is_active:
             return Response(
-                {
-                    "detail": "Användarkontot är inaktiverat."
-                },
+                {"detail": "Användarkontot är inaktiverat."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
@@ -87,12 +82,7 @@ class AdminLogoutView(APIView):
 
     def post(self, request):
         logout(request)
-
-        return Response(
-            {
-                "detail": "Utloggning lyckades."
-            }
-        )
+        return Response({"detail": "Utloggning lyckades."})
 
 
 class AdminMeView(APIView):
@@ -100,7 +90,6 @@ class AdminMeView(APIView):
 
     def get(self, request):
         user = request.user
-
         return Response(
             {
                 "id": user.id,
@@ -136,11 +125,11 @@ class CompanyLoginView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        # Sätt sessionsdata och markera som modifierad
+        # Sätt sessionsdata och spara i session-tabellen
         request.session["company_id"] = company.id
         request.session["company_code"] = company.company_code
         request.session.modified = True
-        request.session.save()  # Tvinga sparning i django_session
+        request.session.save()
 
         return Response(
             {
@@ -162,12 +151,7 @@ class CompanyLogoutView(APIView):
 
     def post(self, request):
         request.session.flush()
-
-        return Response(
-            {
-                "detail": "Utloggning lyckades."
-            }
-        )
+        return Response({"detail": "Utloggning lyckades."})
 
 
 class CompanyMeView(APIView):
@@ -178,20 +162,12 @@ class CompanyMeView(APIView):
 
         if not company_id:
             return Response(
-                {
-                    "detail": "Inte inloggad."
-                },
+                {"detail": "Inte inloggad."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        company = get_object_or_404(
-            Company,
-            pk=company_id,
-        )
-
-        return Response(
-            CompanySerializer(company).data
-        )
+        company = get_object_or_404(Company, pk=company_id)
+        return Response(CompanySerializer(company).data)
 
 
 # ============================================================
@@ -202,25 +178,14 @@ class CompanyListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        companies = Company.objects.prefetch_related(
-            "allowed_phones"
-        ).all()
-
-        serializer = CompanySerializer(
-            companies,
-            many=True,
-        )
-
+        companies = Company.objects.prefetch_related("allowed_phones").all()
+        serializer = CompanySerializer(companies, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = CompanySerializer(
-            data=request.data
-        )
-
+        serializer = CompanySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         company = serializer.save()
-
         return Response(
             CompanySerializer(company).data,
             status=status.HTTP_201_CREATED,
@@ -238,35 +203,19 @@ class CompanyDetailView(APIView):
 
     def get(self, request, pk):
         company = self.get_object(pk)
-
-        return Response(
-            CompanySerializer(company).data
-        )
+        return Response(CompanySerializer(company).data)
 
     def patch(self, request, pk):
         company = self.get_object(pk)
-
-        serializer = CompanySerializer(
-            company,
-            data=request.data,
-            partial=True,
-        )
-
+        serializer = CompanySerializer(company, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         company = serializer.save()
-
-        return Response(
-            CompanySerializer(company).data
-        )
+        return Response(CompanySerializer(company).data)
 
     def delete(self, request, pk):
         company = self.get_object(pk)
-
         company.delete()
-
-        return Response(
-            status=status.HTTP_204_NO_CONTENT
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # ============================================================
@@ -277,13 +226,21 @@ class ProductListView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # DEBUG: Kolla vad Django ser i sessionen
         company_id = request.session.get("company_id")
-        print(f"👉 [ProductListView] Session company_id = {company_id}")
-        print(f"👉 [ProductListView] Cookies mottagna: {request.COOKIES}")
-
         products = Product.objects.filter(active=True)
 
+        # 1. Om kunden är inloggad och har en aktiv sortimentspolicy:
+        if company_id:
+            try:
+                company = Company.objects.prefetch_related("allowed_phones").get(pk=company_id)
+                if company.has_phone_policy:
+                    # Returnera BARA de exakt utvalda artiklarna (inga generella tillbehör släpps igenom)
+                    allowed_ids = company.allowed_phones.values_list("id", flat=True)
+                    products = products.filter(id__in=allowed_ids)
+            except Company.DoesNotExist:
+                pass
+
+        # 2. Filtrera på product_type om frontend efterfrågar det (t.ex. ?product_type=phone)
         product_type = request.query_params.get("product_type")
         if product_type:
             products = products.filter(product_type=product_type)
@@ -301,7 +258,6 @@ class ProductDetailView(APIView):
 
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk, active=True)
-
         return Response(
             ProductSerializer(
                 product,
@@ -325,20 +281,18 @@ class CompanyPhonesView(APIView):
         company = get_object_or_404(Company, pk=company_id)
 
         if not company.has_phone_policy:
-            phones = Product.objects.filter(
-                product_type="phone",
-                active=True,
-            )
+            phones = Product.objects.filter(product_type="phone", active=True)
         else:
-            phones = company.allowed_phones.filter(active=True)
+            # Hämtar enbart telefonerna bland företagets tillåtna artiklar
+            phones = company.allowed_phones.filter(product_type="phone", active=True)
 
-        # Skicka med context här också
         serializer = ProductSerializer(
             phones,
             many=True,
             context={"request": request},
         )
         return Response(serializer.data)
+
 
 # ============================================================
 # COMPANY ORDERS
@@ -349,48 +303,32 @@ class CompanyOrderListCreateView(APIView):
 
     def get_company(self, request):
         company_id = request.session.get("company_id")
-
         if not company_id:
             return None
-
-        return Company.objects.get(
-            pk=company_id
-        )
+        return Company.objects.filter(pk=company_id).first()
 
     def get(self, request):
         company = self.get_company(request)
-
         if company is None:
             return Response(
-                {
-                    "detail": "Inte inloggad."
-                },
+                {"detail": "Inte inloggad."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-        orders = Order.objects.filter(
-            company=company
-        ).prefetch_related(
-            "items__product"
-        )
-
+        orders = Order.objects.filter(company=company).prefetch_related("items__product")
         serializer = OrderSerializer(
             orders,
             many=True,
             context={"request": request},
         )
-
         return Response(serializer.data)
 
     @transaction.atomic
     def post(self, request):
         company = self.get_company(request)
-
         if company is None:
             return Response(
-                {
-                    "detail": "Inte inloggad."
-                },
+                {"detail": "Inte inloggad."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
@@ -398,9 +336,7 @@ class CompanyOrderListCreateView(APIView):
             data=request.data,
             context={"request": request},
         )
-
         serializer.is_valid(raise_exception=True)
-
         order = serializer.save()
 
         return Response(
@@ -417,19 +353,14 @@ class CompanyOrderDetailView(APIView):
 
     def get(self, request, pk):
         company_id = request.session.get("company_id")
-
         if not company_id:
             return Response(
-                {
-                    "detail": "Inte inloggad."
-                },
+                {"detail": "Inte inloggad."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
         order = get_object_or_404(
-            Order.objects.prefetch_related(
-                "items__product"
-            ),
+            Order.objects.prefetch_related("items__product"),
             pk=pk,
             company_id=company_id,
         )
