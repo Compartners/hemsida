@@ -34,6 +34,12 @@ class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    email = models.EmailField(
+        blank=True,
+        verbose_name="E-post",
+        help_text="E-postadress som används för orderbekräftelser.",
+    )
+
     class Meta:
         verbose_name = "Företag"
         verbose_name_plural = "Företag"
