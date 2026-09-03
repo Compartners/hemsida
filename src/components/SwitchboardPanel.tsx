@@ -2,6 +2,9 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import lynesVideo from "@/assets/lynes.mp4";
+
+
 
 export type SwitchboardPanelProps = {
   /** Sökväg/URL till videofilen. Default: /src/assets/lynes.mp4 */
@@ -18,7 +21,7 @@ export type SwitchboardPanelProps = {
 };
 
 export default function SwitchboardPanel({
-  videoSrc = "/src/assets/lynes.mp4",
+  videoSrc = lynesVideo,
   badge = "alltid någon som svarar",
   title = "Inga samtal lämnas åt slumpen.",
   description = "Se vem som är tillgänglig, vem som pratar och vem som är redo att svara — direkt i växeln.",
@@ -64,25 +67,35 @@ export default function SwitchboardPanel({
     <div className="hidden md:block">
       <div ref={containerRef} className="relative h-[160vh] w-full">
         {/*
-          justify-start + pt-* istället för justify-center:
-          ger kontroll över avståndet till en fixed navbar, så att
-          laptopens ram inte hamnar bakom/under den innan skrollet startar.
-          pt sänkt (var 24/28/32) så att textblocket längst ner får plats
-          inom h-screen istället för att klippas av overflow-hidden.
+          sticky top-0 h-screen krävs för att scroll-animationen ska fungera,
+          men fasta pt-/höjdvärden gjorde att laptop + text blev högre än
+          fönstret på korta skärmar (text klipptes av overflow-hidden) och
+          fick för mycket luft på höga skärmar. Allt nedan skalar nu mot
+          viewport-höjden med clamp()/dvh istället för fasta breakpoints.
         */}
-        <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-start overflow-hidden px-4 pt-16 sm:pt-20 lg:pt-24">
+        <div
+          className="sticky top-0 flex w-full flex-col items-center justify-start overflow-hidden px-4"
+          style={{
+            height: "100dvh",
+            paddingTop: "clamp(8rem, 8dvh, 6rem)",
+          }}
+        >
 
           {/* Huvudbehållare med fast vertikal centrering */}
           <div className="relative flex w-full max-w-5xl flex-col items-center">
 
             {/* ============================================================
                 3D LAPTOP
-                Perspective ligger på YTTRE wrappern, lägre värde (1100px)
-                ger mer märkbar djupkänsla än 2000px.
+                Bredden skalar mot viewport-höjd (dvh) så att laptopen aldrig
+                tränger undan textblocket på korta skärmar, och inte blir för
+                liten/isolerad på höga skärmar.
             ============================================================ */}
             <div
-              className="relative w-full max-w-5xl py-2"
-              style={{ perspective: "2000px" }}
+              className="relative w-full py-2"
+              style={{
+                perspective: "2000px",
+                maxWidth: "min(64rem, 100dvh)",
+              }}
             >
               <motion.div
                 style={{
@@ -102,7 +115,7 @@ export default function SwitchboardPanel({
                     transformOrigin: "bottom center",
                     transformStyle: "preserve-3d",
                   }}
-                  className="relative z-10 w-[90%] rounded-t-2xl border border-neutral-700/70 bg-neutral-900 p-2.5 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] ring-1 ring-white/10 sm:p-3"
+                  className="relative z-10 w-[110%] rounded-t-2xl border border-neutral-700/70 bg-neutral-900 p-2.5 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)] ring-1 ring-white/10 sm:p-3"
                 >
                   {/* BAKSIDA PÅ LOCKET (Syns när locket är nerfällt) */}
                   {/* OBS: roterad kring X (samma axel som screenRotateX), inte Y */}
@@ -167,27 +180,36 @@ export default function SwitchboardPanel({
 
             {/* ============================================================
                 TEXTINNEHÅLL
-                mt/min-h sänkta något så blocket garanterat får plats
-                inom h-screen tillsammans med laptopen ovanför.
+                min-h borttagen (den tvingade fram klippning på korta
+                skärmar). mt och textstorlekar skalar nu mot dvh med clamp()
+                så blocket alltid får plats inom h-screen tillsammans med
+                laptopen, oavsett skärmens höjd.
             ============================================================ */}
             <motion.div
               style={{
                 opacity: textOpacity,
                 y: textY,
+                marginTop: "clamp(0.75rem, 3dvh, 1.5rem)",
               }}
-              className="mt-4 flex min-h-[110px] max-w-3xl flex-col items-center text-center sm:mt-6"
+              className="flex max-w-3xl flex-col items-center text-center"
             >
               {badge && (
-                <span className="mb-2.5 inline-block font-mono text-xs font-medium uppercase tracking-[0.12em] text-primary">
+                <span className="mb-2 inline-block font-mono text-xs font-medium uppercase tracking-[0.12em] text-primary">
                   {badge}
                 </span>
               )}
 
-              <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+              <h2
+                className="font-display font-bold tracking-tight text-foreground"
+                style={{ fontSize: "clamp(1.25rem, 4dvh, 3rem)" }}
+              >
                 {title}
               </h2>
 
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+              <p
+                className="mt-3 max-w-2xl leading-relaxed text-muted-foreground"
+                style={{ fontSize: "clamp(0.8rem, 1.8dvh, 1rem)" }}
+              >
                 {description}
               </p>
             </motion.div>

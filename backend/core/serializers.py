@@ -10,6 +10,9 @@ from rest_framework import serializers
 from .models import Company, Product, Order, OrderItem
 
 
+import logging
+logger = logging.getLogger(__name__)
+
 class ProductSerializer(serializers.ModelSerializer):
     price = serializers.SerializerMethodField()
 

@@ -30,7 +30,7 @@ const BackToTop = () => {
   return (
     <button
       onClick={scrollToTop}
-      className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 hover:scale-110 transition-all duration-300 flex items-center justify-center animate-fade-in"
+      className="fixed bottom-14 right-6 z-40 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 hover:scale-110 transition-all duration-300 flex items-center justify-center animate-fade-in"
       aria-label="Tillbaka till toppen"
     >
       <ArrowUp className="w-5 h-5" />

@@ -8,7 +8,10 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
 import SwitchboardPanel from "@/components/SwitchboardPanel";
-import SwitchboardPanel1 from "@/components/SwitchboardPanel1";
+import Banderoll from "@/components/Banderoll";
+import WhyCompartners from "@/components/WhyCompartners";
+import HowItWorks from "@/components/HowItWorks";
+import FAQ from "@/components/FAQ";
 
 const Index = () => {
   return (
@@ -25,20 +28,29 @@ const Index = () => {
           email: "info@compartners.se",
         }}
       />
+
       <Navbar />
+
       <main>
         <Hero />
-        <SwitchboardPanel/>
-                <Services />
-
-        <SwitchboardPanel1/>
-
+        <WhyCompartners />
+        <Services />
+        <HowItWorks />
+        <Banderoll />
+        <SwitchboardPanel />
         <Stats />
+
         <Testimonials />
+
+        <FAQ />
+
         <Contact />
       </main>
+
       <Footer />
+
       <CookieBanner />
+
     </div>
   );
 };

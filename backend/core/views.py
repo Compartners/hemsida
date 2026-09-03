@@ -139,7 +139,6 @@ class CompanyLoginView(APIView):
                     "name": company.name,
                     "company_code": company.company_code,
                     "organization_number": company.organization_number,
-                    "price_markup": str(company.price_markup),
                     "has_phone_policy": company.has_phone_policy,
                 },
             }

@@ -2,6 +2,14 @@ const API_URL =
   import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
 
 let csrfToken: string | null = null;
+let csrfPromise: Promise<string> | null = null;
+
+// Lyssnare för när en session dör (kopplas mot router / auth-state)
+let onSessionExpiredCallback: (() => void) | null = null;
+
+export function onSessionExpired(callback: () => void) {
+  onSessionExpiredCallback = callback;
+}
 
 /* ============================================================
    TYPES
@@ -42,18 +50,29 @@ export type CompanyLoginResponse = {
    ============================================================ */
 
 async function getCsrfToken(): Promise<string> {
-  const response = await fetch(`${API_URL}/auth/csrf/`, {
-    method: "GET",
-    credentials: "include",
-  });
+  // Lås mot pågående anrop så vi inte gör 5 st anrop parallellt
+  if (csrfPromise) return csrfPromise;
 
-  if (!response.ok) {
-    throw new Error("Kunde inte hämta CSRF-token.");
-  }
+  csrfPromise = (async () => {
+    try {
+      const response = await fetch(`${API_URL}/auth/csrf/`, {
+        method: "GET",
+        credentials: "include",
+      });
 
-  const data = await response.json();
-  csrfToken = data.csrfToken;
-  return csrfToken;
+      if (!response.ok) {
+        throw new Error("Kunde inte hämta CSRF-token.");
+      }
+
+      const data = await response.json();
+      csrfToken = data.csrfToken;
+      return csrfToken as string;
+    } finally {
+      csrfPromise = null;
+    }
+  })();
+
+  return csrfPromise;
 }
 
 /* ============================================================
@@ -68,7 +87,8 @@ function isUnsafeMethod(method?: string) {
 
 async function apiFetch<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  isRetry = false
 ): Promise<T> {
   const method = (options.method || "GET").toUpperCase();
 
@@ -78,7 +98,7 @@ async function apiFetch<T>(
 
   const headers = new Headers(options.headers);
 
-  if (options.body) {
+  if (options.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -93,12 +113,22 @@ async function apiFetch<T>(
     headers,
   });
 
-  if (response.status === 403) {
-    const text = await response.text();
+  // 1. Session Expiry & Ej inloggad (401)
+  if (response.status === 401) {
+    if (onSessionExpiredCallback) {
+      onSessionExpiredCallback();
+    }
+    throw new Error("Sessionen har löpt ut. Vänligen logga in igen.");
+  }
+
+  // 2. CSRF Failure Retry (Hämta ny token och kör om en gång)
+  if (response.status === 403 && !isRetry) {
+    const text = await response.clone().text();
     if (text.toLowerCase().includes("csrf")) {
       csrfToken = null;
+      await getCsrfToken();
+      return apiFetch<T>(endpoint, options, true);
     }
-    throw new Error("CSRF-valideringen misslyckades.");
   }
 
   const contentType = response.headers.get("content-type");
@@ -158,10 +188,10 @@ export async function getCompanyPhones() {
   return apiFetch<ApiProduct[]>("/company/phones/");
 }
 
-
 /* ============================================================
    COMPANY ORDERS
    ============================================================ */
+
 export type ApiOrderItem = {
   id: number;
   product: {
@@ -190,7 +220,6 @@ export type ApiOrder = {
 export async function getCompanyOrders() {
   return apiFetch<ApiOrder[]>("/company/orders/");
 }
-
 
 export type CreateOrderItemPayload = {
   product_id?: number;
