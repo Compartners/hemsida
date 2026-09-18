@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useMotionValue, useMotionTemplate, type Variants } from "framer-motion";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  type Variants,
+} from "framer-motion";
+
 
 interface StepItem {
   number: string;
@@ -38,36 +44,61 @@ const steps: readonly StepItem[] = [
 ];
 
 const containerVariants: Variants = {
-  hidden: { opacity: 0 },
+  hidden: {
+    opacity: 0,
+  },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.1,
+      staggerChildren: 0.1,
+      delayChildren: 0.08,
     },
   },
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 24, scale: 0.98 },
+  hidden: {
+    opacity: 0,
+    y: 22,
+    scale: 0.985,
+  },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
       type: "spring",
-      damping: 24,
+      damping: 25,
       stiffness: 110,
     },
   },
 };
 
-const StepCard = ({ step, index }: { step: StepItem; index: number }) => {
+const StepCard = ({
+  step,
+  index,
+}: {
+  step: StepItem;
+  index: number;
+}) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+  const glowBackground = useMotionTemplate`
+    radial-gradient(
+      220px circle at ${mouseX}px ${mouseY}px,
+      hsl(var(--primary) / 0.10),
+      transparent 78%
+    )
+  `;
+
+  function handleMouseMove({
+    currentTarget,
+    clientX,
+    clientY,
+  }: React.MouseEvent<HTMLDivElement>) {
     const { left, top } = currentTarget.getBoundingClientRect();
+
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
   }
@@ -75,50 +106,138 @@ const StepCard = ({ step, index }: { step: StepItem; index: number }) => {
   return (
     <motion.div
       variants={cardVariants}
-      whileHover={{ y: -6, scale: 1.01 }}
+      whileHover={{
+        y: -4,
+      }}
       onMouseMove={handleMouseMove}
-      className="group relative flex flex-col justify-between rounded-2xl border border-border/60 bg-card/60 p-6 sm:p-7 backdrop-blur-md shadow-sm hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 ease-out"
+      className="
+        group
+        relative
+        flex
+        flex-col
+        justify-between
+        overflow-hidden
+        rounded-2xl
+        border
+        border-border
+        bg-card
+        p-6
+        shadow-card
+        transition-all
+        duration-300
+        hover:border-primary/30
+        hover:shadow-lifted
+        sm:p-7
+      "
     >
-      {/* Bakgrunds-glow som följer muspekaren */}
+      {/* Subtil pointer-signal */}
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          -inset-px
+          rounded-2xl
+          opacity-0
+          transition-opacity
+          duration-300
+          group-hover:opacity-100
+        "
         style={{
-          background: useMotionTemplate`
-            radial-gradient(
-              220px circle at ${mouseX}px ${mouseY}px,
-              rgba(var(--primary-rgb, 59, 130, 246), 0.12),
-              transparent 80%
-            )
-          `,
+          background: glowBackground,
         }}
       />
 
       <div className="relative z-10">
-        {/* Header: Siffra + Highlight Badge */}
-        <div className="flex items-center justify-between gap-4 mb-6">
-          <span className="font-mono text-2xl md:text-3xl font-bold text-primary group-hover:text-primary transition-colors duration-300">
+        {/* Nummer + processetikett */}
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <span
+            className="
+              font-technical
+              text-2xl
+              font-medium
+              tracking-tight
+              text-primary
+              md:text-3xl
+            "
+          >
             {step.number}
           </span>
-          <span className="text-[11px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+
+          <span
+            className="
+              text-[11px]
+              font-medium
+              uppercase
+              tracking-[0.12em]
+              text-muted-foreground
+            "
+          >
             {step.highlight}
           </span>
         </div>
 
-        <h3 className="font-display text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 tracking-tight">
+        <h3
+          className="
+            font-display
+            text-lg
+            font-bold
+            tracking-tight
+            text-foreground
+            transition-colors
+            duration-300
+            group-hover:text-primary
+          "
+        >
           {step.title}
         </h3>
 
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground font-normal">
+        <p
+          className="
+            mt-2
+            text-sm
+            font-normal
+            leading-relaxed
+            text-muted-foreground
+          "
+        >
           {step.text}
         </p>
       </div>
 
-      {/* Stegindikator i botten */}
-      <div className="relative z-10 mt-6 pt-4 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
-        <span>Steg {index + 1} av 4</span>
-        <span className="font-medium text-primary/60 group-hover:text-primary transition-colors">
-          0{index + 1}
+      {/* Stegindikator */}
+      <div
+        className="
+          relative
+          z-10
+          mt-6
+          flex
+          items-center
+          justify-between
+          border-t
+          border-border
+          pt-4
+          text-xs
+          text-muted-foreground
+        "
+      >
+        <span>
+          Steg {index + 1} av {steps.length}
         </span>
+
+        <span
+          className="
+            h-1.5
+            w-1.5
+            rounded-full
+            bg-primary
+            opacity-40
+            transition-all
+            duration-300
+            group-hover:scale-125
+            group-hover:opacity-100
+          "
+        />
       </div>
     </motion.div>
   );
@@ -128,51 +247,151 @@ export default function HowItWorks() {
   const sectionRef = useRef<HTMLElement>(null);
 
   return (
-    <section 
-      ref={sectionRef} 
-      id="sa-fungerar-det" 
-      className="relative py-20 md:py-28 overflow-hidden bg-muted/30 border-y border-border/40"
+    <section
+      ref={sectionRef}
+      id="sa-fungerar-det"
+      className="
+        relative
+        overflow-hidden
+        border-y
+        border-border
+        bg-muted/30
+        py-20
+        md:py-28
+      "
     >
-      {/* Ambient background glow */}
+      {/* Primary ambient signal */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-primary/5 rounded-full blur-[140px] -z-10"
+        className="
+          pointer-events-none
+          absolute
+          left-1/2
+          top-1/2
+          -z-10
+          h-[360px]
+          w-[720px]
+          -translate-x-1/2
+          -translate-y-1/2
+          rounded-full
+          bg-primary/5
+          blur-[150px]
+        "
       />
 
-      <div className="container mx-auto px-6 max-w-7xl">
+      {/* Secondary ambient signal */}
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          -bottom-40
+          right-[8%]
+          -z-10
+          h-[300px]
+          w-[420px]
+          rounded-full
+          bg-secondary/5
+          blur-[150px]
+        "
+      />
+
+      <div className="container mx-auto max-w-7xl px-6">
         {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="mx-auto max-w-3xl text-center space-y-3 mb-16"
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 16,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+            margin: "-60px",
+          }}
+          transition={{
+            duration: 0.5,
+            ease: "easeOut",
+          }}
+          className="
+            mx-auto
+            mb-16
+            max-w-3xl
+            text-center
+          "
         >
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest bg-primary/10 text-primary border border-primary/20">
-            Processen
-          </span>
+          {/* Brandankare */}
+          <div className="mb-5 flex flex-col items-center gap-3">
 
-          <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight text-foreground">
-            Från behov till{" "}
-              driftsatt lösning.
+            <span
+              className="
+                font-technical
+                text-[11px]
+                font-medium
+                uppercase
+                tracking-[0.14em]
+                text-muted-foreground
+              "
+            >
+              Processen
+            </span>
+          </div>
 
+          <h2
+            className="
+              font-display
+              text-3xl
+              font-bold
+              tracking-tight
+              text-foreground
+              md:text-5xl
+            "
+          >
+            Från behov till driftsatt lösning.
           </h2>
 
-          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Vi gör övergången enkel och trygg utan avbrott i er dagliga verksamhet.
+          <p
+            className="
+              mx-auto
+              mt-4
+              max-w-2xl
+              text-sm
+              leading-relaxed
+              text-muted-foreground
+              md:text-base
+            "
+          >
+            Vi gör övergången enkel och trygg utan avbrott i er dagliga
+            verksamhet.
           </p>
         </motion.div>
 
-        {/* 4-stegs Grid */}
-        <motion.div 
+        {/* Process */}
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-40px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
+          viewport={{
+            once: true,
+            margin: "-40px",
+          }}
+          className="
+            grid
+            grid-cols-1
+            gap-5
+            sm:grid-cols-2
+            md:gap-6
+            lg:grid-cols-4
+          "
         >
           {steps.map((step, index) => (
-            <StepCard key={step.number} step={step} index={index} />
+            <StepCard
+              key={step.number}
+              step={step}
+              index={index}
+            />
           ))}
         </motion.div>
       </div>

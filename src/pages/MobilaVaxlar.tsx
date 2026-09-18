@@ -2,370 +2,759 @@
 
 import { useState } from "react";
 import {
-  Phone,
-  Users,
-  Settings,
-  Zap,
+  ArrowRight,
+  CheckCircle2,
+  ChevronDown,
   Cloud,
-  Shield,
+  Headphones,
+  Layers,
+  Phone,
   PhoneCall,
   PhoneForwarded,
-  Clock,
-  ChevronDown,
-  Layers,
-  Headphones,
-  Sliders,
+  RefreshCw,
+  Settings,
+  Shield,
+  Smartphone,
+  Users,
+  Zap,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import SEO from "@/components/SEO";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import Contact from "@/components/Contact";
-import { Switch } from "@radix-ui/react-switch";
-import SwitchboardPanel from "@/components/SwitchboardPanel";
+import { AnimatePresence, motion } from "framer-motion";
 
-const TEAM_MEMBERS = [
-  { name: "Johan Berg", role: "Sälj / Stockholm", status: "available", ext: "101" },
-  { name: "Sara Lindqvist", role: "Supportchef", status: "busy", ext: "102" },
-  { name: "Mikael Ek", role: "Projektledare", status: "lunch", ext: "103" },
-  { name: "Elin Andersson", role: "Ekonomi", status: "available", ext: "104" },
+import SEO from "@/components/SEO";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import Contact from "@/components/Contact";
+import SwitchboardPanel from "@/components/SwitchboardPanel";
+import BrandSignalBars from "@/components/SignalBars";
+
+const BENEFITS = [
+  {
+    icon: PhoneCall,
+    title: "Rätt person svarar snabbare",
+    description:
+      "Styr inkommande samtal med svarsgrupper, köer, knappval och prioriteringar utifrån hur ert företag faktiskt arbetar.",
+  },
+  {
+    icon: Smartphone,
+    title: "Jobba från valfri plats",
+    description:
+      "Medarbetare kan använda företagsnumret från mobilen, datorn eller Teams – på kontoret, hemma eller på språng.",
+  },
+  {
+    icon: Users,
+    title: "En bättre kundupplevelse",
+    description:
+      "Kunden möts av rätt öppettider, tydliga val och ett professionellt samtalsflöde istället för att skickas runt.",
+  },
+];
+
+const FEATURES = [
+  {
+    icon: Phone,
+    title: "Svarsgrupper & köer",
+    description:
+      "Fördela inkommande samtal mellan rätt personer och team. Välj hur samtalen ska ringa och vad som händer om ingen svarar.",
+  },
+  {
+    icon: PhoneForwarded,
+    title: "Knappval & samtalsflöden",
+    description:
+      "Låt kunden välja exempelvis försäljning, support eller ekonomi och styr samtalet direkt till rätt funktion.",
+  },
+  {
+    icon: Cloud,
+    title: "Molnbaserad växel",
+    description:
+      "Växeln följer med användaren. Ingen lokal telefonväxel behöver installeras eller underhållas på kontoret.",
+  },
+  {
+    icon: Layers,
+    title: "Microsoft Teams",
+    description:
+      "Koppla företagstelefoni till Teams så att medarbetare kan ringa och ta emot externa samtal direkt i sitt vanliga arbetsverktyg.",
+  },
+  {
+    icon: Settings,
+    title: "Administration",
+    description:
+      "Hantera användare, öppettider, nummer, grupper och andra inställningar utan att bygga om hela lösningen.",
+  },
+  {
+    icon: Headphones,
+    title: "Personlig support",
+    description:
+      "Ni får hjälp både vid uppstart och när verksamheten förändras – utan att själva behöva bli experter på telefoni.",
+  },
+];
+
+const PROCESS_STEPS = [
+  {
+    number: "01",
+    title: "Vi kartlägger hur ni arbetar",
+    description:
+      "Vi går igenom nummer, användare, öppettider, samtalsvolymer, svarsgrupper och hur kunderna ska kunna nå er.",
+  },
+  {
+    number: "02",
+    title: "Vi bygger rätt lösning",
+    description:
+      "Utifrån behovet väljer vi plattform, abonnemang och funktioner och konfigurerar växeln innan flytten.",
+  },
+  {
+    number: "03",
+    title: "Nummer flyttas och teamet förbereds",
+    description:
+      "Vi hjälper till med portering av befintliga nummer och ser till att användarna vet hur lösningen fungerar.",
+  },
+  {
+    number: "04",
+    title: "Vi följer upp efter start",
+    description:
+      "När växeln är igång hjälper vi till med justeringar, nya användare och förändringar när verksamheten utvecklas.",
+  },
 ];
 
 const FAQ_ITEMS = [
   {
+    q: "Vad är egentligen en mobil växel?",
+    a: "En mobil växel är företagets centrala system för inkommande och utgående telefoni. Den gör det möjligt att styra samtal till rätt person eller avdelning, använda gemensamma företagsnummer och låta medarbetare arbeta från mobil, dator eller andra anslutna enheter.",
+  },
+  {
     q: "Är ni bundna till en viss operatör eller plattform?",
-    a: "Nej, vi är helt operatörsoberoende. Vi jobbar med marknadens ledande plattformar (bland annat Lynes, Telia och Tele2) och sätter ihop den lösning som passar just ert sätt att arbeta.",
+    a: "Nej. Compartners arbetar operatörsoberoende och kan hjälpa er att välja lösning utifrån verksamhetens behov istället för att utgå från en enskild operatör eller plattform.",
   },
   {
     q: "Hur fungerar det med våra befintliga telefonnummer?",
-    a: "Vi tar hand om hela porteringen åt er. Ni behåller alla era fasta och mobila nummer utan något som helst driftavbrott under övergången.",
+    a: "Befintliga nummer kan normalt flyttas till den nya lösningen. Vi hjälper till med porteringen och planerar övergången så att bytet blir så smidigt som möjligt.",
   },
   {
     q: "Kan medarbetare svara både i mobilen och på datorn?",
-    a: "Ja! Växeln fungerar sömlöst via mobilapp, datorapplikation (softphone för Mac/PC), Microsoft Teams-integration och klassiska bordstelefoner om ni önskar det.",
+    a: "Ja. Beroende på vald lösning kan användarna arbeta via mobilapp, datorapplikation, Microsoft Teams och vid behov även traditionella bordstelefoner.",
   },
   {
-    q: "Hur snabbt kan vi komma igång med en ny växel?",
-    a: "Vanligtvis är allt uppsatt och klart inom 1–2 veckor beroende på porteringstider. Vi konfigurerar alla samtalsflöden och utbildar ert team innan skarp start.",
+    q: "Kan vi ha olika öppettider och samtalsflöden?",
+    a: "Ja. Växeln kan exempelvis styra samtal olika beroende på tid, dag, avdelning och tillgänglighet. Ni kan även använda välkomstmeddelanden, knappval, köer och hänvisningar.",
+  },
+  {
+    q: "Hur lång tid tar det att byta växel?",
+    a: "Ett normalt byte kan ofta genomföras inom cirka 1–2 veckor, men tiden beror bland annat på omfattning, vald lösning och portering av befintliga nummer. Vi planerar hela övergången tillsammans med er.",
   },
 ];
 
 export default function MobilaVaxlar() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [selectedQueue, setSelectedQueue] = useState<"sales" | "support">("sales");
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary">
       <SEO
-        title="Mobil växel för företag – Oberoende växellösningar | Compartners"
-        description="Skräddarsydd mobil växel från Compartners. Smarta köer, svarsgrupper och personlig support oavsett operatör."
+        title="Mobil växel för företag – Företagstelefoni | Compartners"
+        description="Mobil växel anpassad efter hur ert företag arbetar. Compartners hjälper er med svarsgrupper, köer, Teams, portering och personlig support."
         canonical="https://compartners.se/mobila-vaxlar"
       />
+
       <Navbar />
 
       <main>
-        {/* ============================================================
-            1. REN HERO (MÖRK / ACCENTUERAD BAKGRUND)
-        ============================================================ */}
-        <section className="relative pt-33 pb-16 md:pt-44 md:pb-20 overflow-hidden bg-gradient-to-b from-muted/100 via-muted/50 to-muted/30 border-b border-border/40">
+        {/* =========================================================
+            1. HERO
+        ========================================================== */}
+        <section className="relative overflow-hidden border-b border-border/40 bg-gradient-to-b from-muted via-muted/50 to-background pt-32 pb-20 md:pt-44 md:pb-28">
+          {/* =====================================================
+              DEKORATIVA SIGNALSTAPLAR
+              Stora + beskurna. Ska inte upplevas som diagram.
+          ====================================================== */}
+
+          {/* Extra atmosfär */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-primary/5 rounded-full blur-[140px] -z-10"
+            className="
+              pointer-events-none
+              absolute
+              left-1/2
+              top-0
+              h-[420px]
+              w-[900px]
+              -translate-x-1/2
+              rounded-full
+              bg-primary/5
+              blur-[150px]
+            "
           />
 
-          <div className="container mx-auto px-6 max-w-5xl text-center space-y-6">
+          <div className="container relative z-10 mx-auto max-w-6xl px-6">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="space-y-4"
+              className="mx-auto max-w-4xl text-center"
             >
-              <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground leading-[1.15]">
-                Mobil växel anpassad efter{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary">
-                  hur ni faktiskt jobbar.
+              <div className="mb-6 flex justify-center">
+                <span className="rounded-full border border-primary/20 bg-background/50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary backdrop-blur-sm">
+                  Företagstelefoni & mobil växel
+                </span>
+              </div>
+
+              <h1 className="font-display text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+                En företagsväxel byggd efter{" "}
+                <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                  hur ni faktiskt arbetar.
                 </span>
               </h1>
-              <div>
-                <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
-                  Skräddarsydd mobil växel från Compartners. Smarta köer, svarsgrupper och personlig support oavsett operatör.
-                </p>
+
+              <p className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                Vi hjälper er att samla företagets telefoni i en lösning där
+                kunder når rätt person, medarbetarna kan arbeta var de än är
+                och ni slipper anpassa verksamheten efter växeln.
+              </p>
+
+              <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <a
+                  href="#kontakt"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90"
+                >
+                  Prata med oss om er telefoni
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+
+                <a
+                  href="#sa-fungerar-det"
+                  className="inline-flex h-12 items-center justify-center rounded-xl border border-border bg-background/70 px-6 text-sm font-semibold text-foreground backdrop-blur-sm transition-colors hover:bg-muted"
+                >
+                  Se hur det fungerar
+                </a>
+              </div>
+
+              <div className="mt-9 flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-muted-foreground sm:text-sm">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  Behåll befintliga nummer
+                </span>
+
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  Mobil, dator & Teams
+                </span>
+
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  Personlig hjälp hela vägen
+                </span>
               </div>
             </motion.div>
-
-            {/* Badges */}
           </div>
         </section>
-            <SwitchboardPanel/>
-        {/* ============================================================
-            2. INTERAKTIV VÄXEL-ILLUSTRATION (PLACERAD UNDER HERON)
-        ============================================================ */}
-        <section className="py-16 md:py-24 bg-muted/20">
-          <div className="container mx-auto px-6 max-w-6xl">
-            <div className="text-center max-w-xl mx-auto mb-10 space-y-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">Interaktiv översikt</span>
-              <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                Så fungerar ert samtalsflöde i realtid
-              </h2>
-            </div>
 
-            <div className="rounded-3xl border border-border/80 bg-card/90 backdrop-blur-xl shadow-2xl p-6 sm:p-10">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
-                {/* Vänster: Inkommande köer & svarsgrupper */}
-                <div className="lg:col-span-5 space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-border/60">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                      <Sliders className="w-3.5 h-3.5 text-primary" />
-                      Svarsgrupper
-                    </span>
-                    <span className="text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
-                      Växeln är öppen
-                    </span>
-                  </div>
+        {/* =========================================================
+            2. VAD ÄR EN MOBIL VÄXEL?
+        ========================================================== */}
+        <section className="relative overflow-hidden bg-background py-20 md:py-28">
+          {/* Väldigt subtil dekor i kanten */}
+          <BrandSignalBars
+            size="md"
+            align="left"
+            glow={false}
+            className="
+              opacity-[0.545]
+              md:opacity-[0.75]
+            "
+            barsClassName="
+              -translate-x-[65%]
+              translate-y-[18%]
+              scale-[1.25]
+              md:-translate-x-[55%]
+              md:scale-[1.45]
+            "
+          />
 
-                  {/* Svarsgrupp 1: Sälj */}
-                  <div
-                    onClick={() => setSelectedQueue("sales")}
-                    className={`cursor-pointer p-4 rounded-2xl border transition-all duration-200 ${
-                      selectedQueue === "sales"
-                        ? "bg-primary/10 border-primary/50 shadow-sm"
-                        : "bg-background/60 border-border/50 hover:bg-muted/40"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-2 rounded-lg bg-primary/15 text-primary">
-                          <PhoneCall className="w-4 h-4" />
+          {/* Tonar bort motivet innan det når texten */}
+          <div
+            aria-hidden="true"
+            className="
+              pointer-events-none
+              absolute
+              inset-0
+              bg-gradient-to-r
+              from-transparent
+              via-background/70
+              to-background
+            "
+          />
+
+          <div className="container relative z-10 mx-auto max-w-6xl px-6">
+            <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+              <div className="lg:col-span-5">
+                <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                  Börja med behovet
+                </span>
+
+                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                  En mobil växel är mer än ett nummer som ringer.
+                </h2>
+
+                <p className="mt-6 text-base leading-relaxed text-muted-foreground">
+                  Växeln bestämmer hur kunder kommer i kontakt med företaget,
+                  vem som får samtalet och vad som händer när rätt person inte
+                  kan svara.
+                </p>
+
+                <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                  Rätt uppsatt blir den en naturlig del av verksamheten. Fel
+                  uppsatt skapar den istället onödiga köer, missade samtal och
+                  administration.
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-3 lg:col-span-7 lg:grid-cols-1">
+                {BENEFITS.map((benefit) => {
+                  const Icon = benefit.icon;
+
+                  return (
+                    <div
+                      key={benefit.title}
+                      className="group rounded-2xl border border-border/70 bg-card p-6 transition-colors hover:border-primary/30"
+                    >
+                      <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                          <Icon className="h-5 w-5" />
                         </div>
+
                         <div>
-                          <div className="font-bold text-sm text-foreground">Huvudnummer Sälj</div>
-                          <div className="text-xs text-muted-foreground">010-210 27 00</div>
+                          <h3 className="font-display text-base font-bold text-foreground">
+                            {benefit.title}
+                          </h3>
+
+                          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                            {benefit.description}
+                          </p>
                         </div>
                       </div>
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-background border border-border">
-                        0 i kö
-                      </span>
                     </div>
-                    <div className="text-[11px] text-muted-foreground flex items-center gap-3 pt-1">
-                      <span>Metod: Ring alla samtidigt</span>
-                      <span>•</span>
-                      <span>Svarstid: ~4s</span>
-                    </div>
-                  </div>
-
-                  {/* Svarsgrupp 2: Support */}
-                  <div
-                    onClick={() => setSelectedQueue("support")}
-                    className={`cursor-pointer p-4 rounded-2xl border transition-all duration-200 ${
-                      selectedQueue === "support"
-                        ? "bg-primary/10 border-primary/50 shadow-sm"
-                        : "bg-background/60 border-border/50 hover:bg-muted/40"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2.5">
-                        <div className="p-2 rounded-lg bg-secondary/30 text-primary">
-                          <Headphones className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <div className="font-bold text-sm text-foreground">Kundsupport & Jour</div>
-                          <div className="text-xs text-muted-foreground">010-210 27 10</div>
-                        </div>
-                      </div>
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                        1 i kö
-                      </span>
-                    </div>
-                    <div className="text-[11px] text-muted-foreground flex items-center gap-3 pt-1">
-                      <span>Metod: Linjär prioritering</span>
-                      <span>•</span>
-                      <span>Återuppringning aktiv</span>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-muted/40 border border-border/50 flex items-center gap-3 text-xs text-muted-foreground">
-                    <PhoneForwarded className="w-4 h-4 text-primary shrink-0" />
-                    <span>Nattkoppling & helgmeddelanden styrs automatiskt via kalendern.</span>
-                  </div>
-                </div>
-
-                {/* Höger: Live Status på medarbetare */}
-                <div className="lg:col-span-7 space-y-4 lg:border-l lg:border-border/60 lg:pl-8">
-                  <div className="flex items-center justify-between pb-3 border-b border-border/60">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                      <Users className="w-3.5 h-3.5 text-primary" />
-                      Anslutna kollegor & Status
-                    </span>
-                    <span className="text-[11px] text-muted-foreground">Synkad med kalender & Teams</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {TEAM_MEMBERS.map((member) => (
-                      <div
-                        key={member.name}
-                        className="p-3.5 rounded-xl bg-background/70 border border-border/60 flex items-center justify-between hover:border-primary/40 transition-colors"
-                      >
-                        <div className="space-y-0.5">
-                          <div className="font-semibold text-xs md:text-sm text-foreground flex items-center gap-1.5">
-                            {member.name}
-                            <span className="text-[10px] text-muted-foreground font-normal">#{member.ext}</span>
-                          </div>
-                          <div className="text-[11px] text-muted-foreground">{member.role}</div>
-                        </div>
-
-                        {/* Statusindikator */}
-                        <div>
-                          {member.status === "available" && (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                              Ledig
-                            </span>
-                          )}
-                          {member.status === "busy" && (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                              I samtal
-                            </span>
-                          )}
-                          {member.status === "lunch" && (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-                              <Clock className="w-3 h-3" />
-                              Lunch
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* App preview banner */}
-                  <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-primary/10 via-accent/5 to-transparent border border-primary/20 flex items-center justify-between">
-                    <div>
-                      <h4 className="text-xs font-bold text-foreground">Full funktion i mobilen & Teams</h4>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">
-                        Koppla samtal, byt svarsstatus eller lyssna på röstbrevlådor med ett klick.
-                      </p>
-                    </div>
-                    <span className="text-xs font-bold text-primary shrink-0 ml-4">iOS / Android / Mac / PC</span>
-                  </div>
-                </div>
-
+                  );
+                })}
               </div>
             </div>
           </div>
         </section>
 
-        {/* ============================================================
-            3. FUNKTIONER / BENTO GRID
-        ============================================================ */}
-        <section id="funktioner" className="py-20 md:py-28 bg-background border-t border-border/40">
-          <div className="container mx-auto px-6 max-w-7xl">
-            <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-              <span className="text-primary font-semibold text-xs md:text-sm uppercase tracking-widest px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
-                Funktioner som gör skillnad
+        {/* =========================================================
+            3. SAMTALSRESAN
+
+            MEDVETET INGA SIGNALSTAPLAR HÄR.
+            De skulle lätt börja läsas som data / diagram.
+        ========================================================== */}
+        <section
+          id="sa-fungerar-det"
+          className="scroll-mt-24 border-y border-border/40 bg-muted/25 py-20 md:py-28"
+        >
+          <div className="container mx-auto max-w-6xl px-6">
+            <div className="mx-auto mb-14 max-w-2xl text-center">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                Så fungerar det
               </span>
-              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-                Allt er företagstelefoni behöver på en och samma plats
+
+              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                Från inkommande samtal till rätt person.
               </h2>
+
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                Ni bestämmer hur kunden ska tas emot. Växeln sköter resten
+                automatiskt utifrån era regler, öppettider och medarbetarnas
+                tillgänglighet.
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              <div className="p-7 rounded-2xl bg-card border border-border/70 hover:border-primary/40 transition-colors space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <h3 className="font-display text-lg font-bold text-foreground">Smarta samtalsflöden & Köer</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Ställ in knappval (IVR), prioriteringar och återuppringning så att era kunder alltid når rätt person snabbt.
-                </p>
-              </div>
+            <div className="relative grid gap-4 md:grid-cols-4">
+              <div className="absolute left-[12%] right-[12%] top-8 hidden h-px bg-border md:block" />
 
-              <div className="p-7 rounded-2xl bg-card border border-border/70 hover:border-primary/40 transition-colors space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-secondary/20 border border-secondary/30 flex items-center justify-center text-primary">
-                  <Cloud className="w-5 h-5" />
-                </div>
-                <h3 className="font-display text-lg font-bold text-foreground">100% Molnbaserat</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Ingen hårdvara eller lokala servrar som kräver underhåll. Allt uppdateras löpande och fungerar överallt.
-                </p>
-              </div>
+              {[
+                {
+                  step: "01",
+                  title: "Kunden ringer",
+                  text: "Samtalet kommer in via företagets huvudnummer eller ett direktnummer.",
+                },
+                {
+                  step: "02",
+                  title: "Växeln styr",
+                  text: "Öppettider, knappval och regler avgör vart samtalet ska skickas.",
+                },
+                {
+                  step: "03",
+                  title: "Rätt team får samtalet",
+                  text: "Sälj, support eller en specifik medarbetare kan svara från mobil, dator eller Teams.",
+                },
+                {
+                  step: "04",
+                  title: "Ingen kan svara?",
+                  text: "Samtalet kan köas, skickas vidare eller hanteras enligt ert förutbestämda flöde.",
+                },
+              ].map((item) => (
+                <div
+                  key={item.step}
+                  className="relative rounded-2xl border border-border/70 bg-card p-6"
+                >
+                  <div className="relative z-10 mb-5 flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-xs font-bold text-primary">
+                    {item.step}
+                  </div>
 
-              <div className="p-7 rounded-2xl bg-card border border-border/70 hover:border-primary/40 transition-colors space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center text-primary">
-                  <Settings className="w-5 h-5" />
-                </div>
-                <h3 className="font-display text-lg font-bold text-foreground">Enkel Administration</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Lägg till nya kollegor, ändra öppettider och hantera licenser direkt via en tydlig webbportal.
-                </p>
-              </div>
+                  <h3 className="font-display text-base font-bold">
+                    {item.title}
+                  </h3>
 
-              <div className="p-7 rounded-2xl bg-card border border-border/70 hover:border-primary/40 transition-colors space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                  <Layers className="w-5 h-5" />
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {item.text}
+                  </p>
                 </div>
-                <h3 className="font-display text-lg font-bold text-foreground">Microsoft Teams-integration</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Ring och ta emot externa växelsamtal direkt i Teams-klienten utan att byta program.
-                </p>
-              </div>
-
-              <div className="p-7 rounded-2xl bg-card border border-border/70 hover:border-primary/40 transition-colors space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-secondary/20 border border-secondary/30 flex items-center justify-center text-primary">
-                  <Zap className="w-5 h-5" />
-                </div>
-                <h3 className="font-display text-lg font-bold text-foreground">Snabb & Trygg Portering</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Vi sköter all kontakt med er tidigare operatör. Ni behåller alla nummer och slipper driftstopp.
-                </p>
-              </div>
-
-              <div className="p-7 rounded-2xl bg-card border border-border/70 hover:border-primary/40 transition-colors space-y-4">
-                <div className="w-10 h-10 rounded-xl bg-accent/20 border border-accent/30 flex items-center justify-center text-primary">
-                  <Shield className="w-5 h-5" />
-                </div>
-                <h3 className="font-display text-lg font-bold text-foreground">Personlig Support & Utbildning</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  Ni får en dedikerad kontaktperson hos oss som hjälper till med allt från utbildning till löpande justeringar.
-                </p>
-              </div>
-
+              ))}
             </div>
           </div>
         </section>
 
-        {/* ============================================================
-            4. FAQ
-        ============================================================ */}
-        <section className="py-20 bg-muted/30 border-t border-border/40">
-          <div className="container mx-auto px-6 max-w-4xl">
-            <div className="text-center mb-12 space-y-2">
-              <span className="text-xs font-semibold text-primary uppercase tracking-widest">FAQ</span>
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">Vanliga frågor om mobila växlar</h2>
+        {/* =========================================================
+            4. PRODUKTVISUALISERING
+        ========================================================== */}
+        <section className="bg-background py-20 md:py-28">
+          <div className="container mx-auto max-w-7xl px-6">
+            <div className="mx-auto mb-12 max-w-2xl text-center">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                En gemensam arbetsyta
+              </span>
+
+              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl">
+                Överblick över samtal, kollegor och tillgänglighet.
+              </h2>
+
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                Medarbetarna kan se vem som är tillgänglig, hantera samtal och
+                ändra sin egen status utan att behöva förstå tekniken bakom
+                växeln.
+              </p>
+            </div>
+
+            <SwitchboardPanel />
+          </div>
+        </section>
+
+        {/* =========================================================
+            5. FUNKTIONER
+        ========================================================== */}
+        <section
+          id="funktioner"
+          className="border-y border-border/40 bg-muted/20 py-20 md:py-28"
+        >
+          <div className="container mx-auto max-w-7xl px-6">
+            <div className="mb-14 grid gap-6 lg:grid-cols-2 lg:items-end">
+              <div className="max-w-2xl">
+                <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                  Funktionerna bakom upplevelsen
+                </span>
+
+                <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                  Företagstelefoni som kan följa verksamheten.
+                </h2>
+              </div>
+
+              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground lg:justify-self-end lg:text-base">
+                Ni behöver inte aktivera allt från dag ett. Vi sätter upp det
+                som skapar värde för er idag och kan utveckla lösningen när
+                organisationen förändras.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {FEATURES.map((feature) => {
+                const Icon = feature.icon;
+
+                return (
+                  <div
+                    key={feature.title}
+                    className="group rounded-2xl border border-border/70 bg-card p-7 transition-all hover:-translate-y-0.5 hover:border-primary/30"
+                  >
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                      <Icon className="h-5 w-5" />
+                    </div>
+
+                    <h3 className="mt-5 font-display text-lg font-bold text-foreground">
+                      {feature.title}
+                    </h3>
+
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            6. VARFÖR COMPARTNERS
+        ========================================================== */}
+        <section className="bg-background py-20 md:py-28">
+          <div className="container mx-auto max-w-6xl px-6">
+            <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-card">
+              {/* ===================================================
+                  SIGNALMOTIV SOM BAKGRUND
+              ==================================================== */}
+              <BrandSignalBars
+                size="lg"
+                align="right"
+                className="
+                  opacity-[0.12]
+                  md:opacity-[0.3]
+                "
+                barsClassName="
+                  translate-x-[45%]
+                  translate-y-[15%]
+                  scale-[1.1]
+                  md:translate-x-[-20%]
+                  md:scale-[1.2]
+                "
+              />
+
+              {/* Gradient över grafiken */}
+              <div
+                aria-hidden="true"
+                className="
+                  pointer-events-none
+                  absolute
+                  inset-0
+                  z-[1]
+                  bg-gradient-to-r
+                  from-card
+                  via-card/95
+                  to-card/40
+                  lg:via-card/85
+                  lg:to-transparent
+                "
+              />
+
+              <div className="relative z-10 grid lg:grid-cols-2">
+                <div className="p-8 sm:p-10 md:p-12">
+                  <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                    Oberoende rådgivning
+                  </span>
+
+                  <h2 className="mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl">
+                    Börja med företaget.
+                    <br />
+                    Inte operatören.
+                  </h2>
+
+                  <p className="mt-6 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    Behovet ser olika ut för ett mindre lokalt bolag, en
+                    rikstäckande organisation och ett företag med support,
+                    jour eller flera kontor.
+                  </p>
+
+                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    Därför börjar vi med hur ni arbetar och hjälper därefter
+                    till att välja en lösning som passar verksamheten.
+                  </p>
+                </div>
+
+                <div className="border-t border-border/60 bg-muted/20 p-8 backdrop-blur-[2px] sm:p-10 md:p-12 lg:border-l lg:border-t-0">
+                  <div className="space-y-6">
+                    {[
+                      {
+                        icon: RefreshCw,
+                        title: "Operatörsoberoende",
+                        text: "Lösningen utgår från era behov istället för från en enskild leverantör.",
+                      },
+                      {
+                        icon: Shield,
+                        title: "En kontakt genom hela bytet",
+                        text: "Vi hjälper till från kartläggning och konfiguration till portering och uppföljning.",
+                      },
+                      {
+                        icon: Zap,
+                        title: "Lösningen kan förändras",
+                        text: "När teamet växer eller arbetssättet ändras kan växeln justeras utan att ni behöver börja om.",
+                      },
+                    ].map((item) => {
+                      const Icon = item.icon;
+
+                      return (
+                        <div key={item.title} className="flex gap-4">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                            <Icon className="h-5 w-5" />
+                          </div>
+
+                          <div>
+                            <h3 className="text-sm font-bold text-foreground">
+                              {item.title}
+                            </h3>
+
+                            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                              {item.text}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            7. PROCESS
+
+            OCKSÅ MEDVETET UTAN STAPLAR.
+        ========================================================== */}
+        <section className="border-y border-border/40 bg-muted/20 py-20 md:py-28">
+          <div className="container mx-auto max-w-6xl px-6">
+            <div className="mx-auto mb-14 max-w-2xl text-center">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                Från gammalt till nytt
+              </span>
+
+              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight md:text-4xl">
+                Ett växelbyte behöver inte bli ett IT-projekt.
+              </h2>
+
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                Vi hjälper till med hela övergången och ser till att den nya
+                lösningen är förberedd innan den tas i bruk.
+              </p>
+            </div>
+
+            <div className="grid gap-px overflow-hidden rounded-3xl border border-border/70 bg-border/70 md:grid-cols-2">
+              {PROCESS_STEPS.map((step) => (
+                <div key={step.number} className="bg-card p-7 sm:p-8">
+                  <span className="text-xs font-bold tracking-widest text-primary">
+                    {step.number}
+                  </span>
+
+                  <h3 className="mt-3 font-display text-lg font-bold">
+                    {step.title}
+                  </h3>
+
+                  <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+                    {step.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 flex items-start gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-5">
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Ett normalt införande kan ofta vara klart inom ungefär{" "}
+                <strong className="font-semibold text-foreground">
+                  1–2 veckor
+                </strong>
+                , beroende på lösning, omfattning och portering av befintliga
+                nummer.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            8. MELLAN-CTA
+        ========================================================== */}
+        <section className="bg-background py-20 md:py-24">
+          <div className="container mx-auto max-w-5xl px-6">
+            <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-card px-7 py-10 text-center sm:px-12 md:py-14">
+              {/* Accent bakom CTA:n */}
+              <BrandSignalBars
+                size="md"
+                align="right"
+                glow={false}
+                className="
+                  opacity-[0.10]
+                  md:opacity-[0.15]
+                "
+                barsClassName="
+                  translate-x-[55%]
+                  translate-y-[20%]
+                  scale-[1.15]
+                  md:translate-x-[35%]
+                  md:scale-[1.35]
+                "
+              />
+
+              <div
+                aria-hidden="true"
+                className="
+                  pointer-events-none
+                  absolute
+                  inset-0
+                  z-[1]
+                  bg-gradient-to-r
+                  from-card
+                  via-card/85
+                  to-transparent
+                "
+              />
+
+              <div className="relative z-10">
+                <h2 className="mx-auto max-w-2xl font-display text-2xl font-bold tracking-tight sm:text-3xl">
+                  Osäker på vilken växellösning ni egentligen behöver?
+                </h2>
+
+                <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                  Ni behöver inte välja plattform, licenser eller funktioner
+                  innan ni kontaktar oss. Börja med att berätta hur ni arbetar
+                  så hjälper vi er att reda ut resten.
+                </p>
+
+                <a
+                  href="#kontakt"
+                  className="mt-7 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                >
+                  Diskutera er lösning
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            9. FAQ
+        ========================================================== */}
+        <section className="border-t border-border/40 bg-muted/30 py-20 md:py-28">
+          <div className="container mx-auto max-w-4xl px-6">
+            <div className="mb-12 text-center">
+              <span className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                Vanliga frågor
+              </span>
+
+              <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                Innan ni byter företagsväxel.
+              </h2>
             </div>
 
             <div className="space-y-3">
               {FAQ_ITEMS.map((item, index) => {
                 const isOpen = openFaq === index;
+
                 return (
                   <div
-                    key={index}
-                    className="rounded-2xl border border-border/70 bg-card overflow-hidden transition-colors"
+                    key={item.q}
+                    className="overflow-hidden rounded-2xl border border-border/70 bg-card"
                   >
                     <button
+                      type="button"
                       onClick={() => setOpenFaq(isOpen ? null : index)}
-                      className="w-full flex items-center justify-between p-5 text-left font-semibold text-foreground text-sm md:text-base hover:text-primary transition-colors"
+                      aria-expanded={isOpen}
+                      className="flex w-full items-center justify-between gap-5 p-5 text-left text-sm font-semibold text-foreground transition-colors hover:text-primary md:p-6 md:text-base"
                     >
                       <span>{item.q}</span>
+
                       <ChevronDown
-                        className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${
+                        className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 ${
                           isOpen ? "rotate-180 text-primary" : ""
                         }`}
                       />
                     </button>
-                    <AnimatePresence>
+
+                    <AnimatePresence initial={false}>
                       {isOpen && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
@@ -373,7 +762,7 @@ export default function MobilaVaxlar() {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <div className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
+                          <div className="border-t border-border/40 px-5 pb-6 pt-4 text-sm leading-relaxed text-muted-foreground md:px-6">
                             {item.a}
                           </div>
                         </motion.div>
@@ -386,8 +775,7 @@ export default function MobilaVaxlar() {
           </div>
         </section>
 
-        {/* Kontaktsektion */}
-        <div id="kontakt">
+        <div id="kontakt" className="scroll-mt-24">
           <Contact />
         </div>
       </main>

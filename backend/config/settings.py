@@ -100,7 +100,7 @@ REST_FRAMEWORK = {
 }
 
 # Session Expiry inställningar
-SESSION_COOKIE_AGE = 60 * 1  # 5 minuter i sekunder
+SESSION_COOKIE_AGE = 60 * 5  # 5 minuter i sekunder
 SESSION_SAVE_EVERY_REQUEST = True  # Förlänger sessionen vid aktivitet (sliding window)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
@@ -126,11 +126,13 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "https://compartners-demo.netlify.app",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
+    "https://compartners-demo.netlify.app",
 ]
 
 

@@ -1,57 +1,51 @@
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import SEO from "@/components/SEO";
-import Stats from "@/components/Stats";
-import Services from "@/components/Services";
-import Testimonials from "@/components/Testimonials";
-import Contact from "@/components/Contact";
-import Footer from "@/components/Footer";
-import CookieBanner from "@/components/CookieBanner";
-import SwitchboardPanel from "@/components/SwitchboardPanel";
-import Banderoll from "@/components/Banderoll";
-import WhyCompartners from "@/components/WhyCompartners";
-import HowItWorks from "@/components/HowItWorks";
-import FAQ from "@/components/FAQ";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+
+import Hero from "../components/home/Hero";
+import TrustStrip from "../components/home/TrustStrip";
+import WhyCompartners from "../components/home/WhyCompartners";
+import ServicesPreview from "../components/home/ServicesPreview";
+import MethodSection from "../components/home/MethodSection";
+import AiFeature from "../components/home/AiFeature";
+import CustomerCases from "../components/home/CostumerCases";
+import PersonalSupport from "../components/home/PersonalSupport";
+import FinalCTA from "../components/home/FinalCTA";
+import ContactSection from "../components/contact/ContactSection";
+import { C } from "vitest/dist/chunks/reporters.d.BFLkQcL6.js";
+import Seo from "@/components/SEO";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <SEO
-        title="Compartners – Operatörsoberoende telefonilösningar för företag"
-        description="Vi skräddarsyr er telefonilösning – mobila växlar, körjournaler och personlig support, oavsett operatör. Ring 010-210 27 00."
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "Compartners",
-          url: "https://compartners.se/",
-          telephone: "+46-10-210-27-00",
-          email: "info@compartners.se",
-        }}
-      />
-
+    <>
       <Navbar />
-
+<Seo
+    title="Compartners – Telefoni, AI och företagskommunikation"
+    description="Compartners hjälper företag med företagstelefoni, AI, mobilitet och personlig support – samlat hos en operatörsoberoende partner."
+    canonical="https://compartners.se/"
+  />
       <main>
         <Hero />
+
+        <TrustStrip />
+
         <WhyCompartners />
-        <Services />
-        <HowItWorks />
-        <Banderoll />
-        <SwitchboardPanel />
-        <Stats />
 
-        <Testimonials />
+        <ServicesPreview />
 
-        <FAQ />
+        <MethodSection />
 
-        <Contact />
+        <AiFeature />
+
+        <CustomerCases />
+
+        <PersonalSupport />
+        <ContactSection />
+
+        <FinalCTA />
       </main>
 
       <Footer />
-
-      <CookieBanner />
-
-    </div>
+    </>
   );
 };
 

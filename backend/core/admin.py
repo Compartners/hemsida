@@ -63,6 +63,7 @@ class ProductAdmin(admin.ModelAdmin):
         "brand",
         "product_type",
         "base_price",
+        "price_class",
         "price",
         "availability",
         "active",
@@ -78,13 +79,16 @@ class ProductAdmin(admin.ModelAdmin):
 
     list_filter = (
         "product_type",
+        "price_class",
         "active",
         "availability",
         "brand",
     )
 
-    # Gör att pris och aktiv kan ändras direkt från produktlistan
+    # Gör att prisklass, pris och aktiv kan ändras direkt
+    # från produktlistan
     list_editable = (
+        "price_class",
         "price",
         "active",
     )
@@ -94,13 +98,9 @@ class ProductAdmin(admin.ModelAdmin):
     actions = [
         "mark_as_phone",
         "mark_as_accessory",
-        "set_price_equal_to_base",
-        "set_price_markup_10_percent",
-        "set_price_markup_20_percent",
-        "set_price_markup_30_percent",
-        "set_price_discount_10_percent",
-        "set_price_discount_20_percent",
-        "set_price_discount_30_percent",
+        "set_price_class_1",
+        "set_price_class_2",
+        "set_price_class_3",
     ]
 
     # ---------------------------------------------------------
@@ -126,107 +126,43 @@ class ProductAdmin(admin.ModelAdmin):
         )
 
     # ---------------------------------------------------------
-    # PRISSÄTTNING
+    # PRISKLASSER
     # ---------------------------------------------------------
 
-    @admin.action(description="Sätt utpris = inköpspris")
-    def set_price_equal_to_base(self, request, queryset):
-        updated = queryset.update(
-            price=F("base_price")
+    @admin.action(description="Sätt prisklass 1 – 99 kr")
+    def set_price_class_1(self, request, queryset):
+        count = queryset.update(
+            price_class=1,
+            price=Decimal("99.00"),
         )
 
         self.message_user(
             request,
-            f"Uppdaterade priset på {updated} produkter.",
+            f"Satte prisklass 1 (99 kr) på {count} produkter.",
         )
 
-    @admin.action(description="Sätt utpris = inköp +10 %%")
-    def set_price_markup_10_percent(self, request, queryset):
-        self._apply_price_factor(
-            request,
-            queryset,
-            Decimal("1.10"),
-            "+10 %",
+    @admin.action(description="Sätt prisklass 2 – 149 kr")
+    def set_price_class_2(self, request, queryset):
+        count = queryset.update(
+            price_class=2,
+            price=Decimal("149.00"),
         )
-
-    @admin.action(description="Sätt utpris = inköp +20 %%")
-    def set_price_markup_20_percent(self, request, queryset):
-        self._apply_price_factor(
-            request,
-            queryset,
-            Decimal("1.20"),
-            "+20 %",
-        )
-
-    @admin.action(description="Sätt utpris = inköp +30 %%")
-    def set_price_markup_30_percent(self, request, queryset):
-        self._apply_price_factor(
-            request,
-            queryset,
-            Decimal("1.30"),
-            "+30 %",
-        )
-
-    @admin.action(description="Sätt utpris = inköp -10 %%")
-    def set_price_discount_10_percent(self, request, queryset):
-        self._apply_price_factor(
-            request,
-            queryset,
-            Decimal("0.90"),
-            "-10 %",
-        )
-
-    @admin.action(description="Sätt utpris = inköp -20 %%")
-    def set_price_discount_20_percent(self, request, queryset):
-        self._apply_price_factor(
-            request,
-            queryset,
-            Decimal("0.80"),
-            "-20 %",
-        )
-
-    @admin.action(description="Sätt utpris = inköp -30 %%")
-    def set_price_discount_30_percent(self, request, queryset):
-        self._apply_price_factor(
-            request,
-            queryset,
-            Decimal("0.70"),
-            "-30 %",
-        )
-
-    # ---------------------------------------------------------
-    # HJÄLPFUNKTION FÖR PRISSÄTTNING
-    # ---------------------------------------------------------
-
-    def _apply_price_factor(
-        self,
-        request,
-        queryset,
-        factor,
-        description,
-    ):
-        count = 0
-
-        for product in queryset:
-            if product.base_price is None:
-                continue
-
-            product.price = (
-                product.base_price * factor
-            ).quantize(
-                Decimal("0.01"),
-                rounding=ROUND_HALF_UP,
-            )
-
-            product.save(
-                update_fields=["price"]
-            )
-
-            count += 1
 
         self.message_user(
             request,
-            f"Räknade om priset ({description}) på {count} produkter.",
+            f"Satte prisklass 2 (149 kr) på {count} produkter.",
+        )
+
+    @admin.action(description="Sätt prisklass 3 – 249 kr")
+    def set_price_class_3(self, request, queryset):
+        count = queryset.update(
+            price_class=3,
+            price=Decimal("249.00"),
+        )
+
+        self.message_user(
+            request,
+            f"Satte prisklass 3 (249 kr) på {count} produkter.",
         )
 
 

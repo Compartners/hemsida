@@ -1,8 +1,12 @@
 import { FormEvent, useState } from "react";
-import { LogIn, LogOut, ShieldCheck, Building2, Receipt } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Building2,
+  LogIn,
+  LogOut,
+  Receipt,
+  ShieldCheck,
+} from "lucide-react";
+
 import { ApiCompany } from "@/lib/api";
 
 type AccountCardProps = {
@@ -10,7 +14,7 @@ type AccountCardProps = {
   loading: boolean;
   onLogin: (customerId: string) => Promise<void>;
   onLogout: () => Promise<void>;
-  onOpenOrderHistory?: () => void; // <-- Ny prop
+  onOpenOrderHistory?: () => void;
 };
 
 export function AccountCard({
@@ -23,12 +27,17 @@ export function AccountCard({
   const [customerId, setCustomerId] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
 
-  const handleLoginSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleLoginSubmit = async (
+    event: FormEvent
+  ) => {
+    event.preventDefault();
+
     if (!customerId.trim()) return;
+
     setLoggingIn(true);
+
     try {
-      await onLogin(customerId);
+      await onLogin(customerId.trim());
       setCustomerId("");
     } finally {
       setLoggingIn(false);
@@ -36,87 +45,142 @@ export function AccountCard({
   };
 
   return (
-    <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm">
+    <div className="rounded-[22px] border border-[#E3E9EF] bg-white p-5 shadow-[0_12px_40px_rgba(19,31,49,0.04)]">
       {loading ? (
-        <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground animate-pulse">
-          <Building2 className="h-4 w-4" />
+        <div className="flex animate-pulse items-center gap-3 py-2 text-sm text-[#7D8794]">
+          <div className="grid h-9 w-9 place-items-center rounded-[12px] bg-[#F4F7FA]">
+            <Building2 size={16} />
+          </div>
+
           Kontrollerar företagskonto...
         </div>
       ) : account ? (
-        <div className="space-y-3">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                <Building2 className="h-4 w-4 text-primary" aria-hidden="true" />
-                <span>{account.name}</span>
+        <div>
+          {/* Logged in */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[13px] bg-[#0B72FE]/10 text-[#0B72FE]">
+                <Building2 size={17} />
               </div>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Kund-ID: <span className="font-mono font-medium text-foreground">{account.company_code}</span>
-              </p>
+
+              <div>
+                <span className="block font-mono text-[9px] uppercase tracking-[0.14em] text-[#8A96A3]">
+                  Företagskonto
+                </span>
+
+                <strong className="mt-1 block text-sm font-semibold text-[#171C25]">
+                  {account.name}
+                </strong>
+
+                <span className="mt-1 block text-[11px] text-[#7D8794]">
+                  Kund-ID:{" "}
+                  <span className="font-mono font-medium text-[#171C25]">
+                    {account.company_code}
+                  </span>
+                </span>
+              </div>
             </div>
+
             {account.has_phone_policy && (
-              <Badge variant="secondary" className="gap-1 border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                <ShieldCheck className="h-3 w-3" />
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#2CCEC2]/10 px-2 py-1 text-[9px] font-semibold text-[#168E85]">
+                <ShieldCheck size={11} />
                 Policy
-              </Badge>
+              </span>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 text-xs"
+          <div className="mt-5 grid grid-cols-2 gap-2 border-t border-[#EEF2F5] pt-4">
+            <button
+              type="button"
               onClick={onOpenOrderHistory}
+              className="inline-flex min-h-[38px] items-center justify-center gap-1.5 rounded-full border border-[#E3E9EF] text-xs font-semibold text-[#667181] transition hover:border-[#CBD6DE] hover:text-[#171C25]"
             >
-              <Receipt className="h-3.5 w-3.5" />
+              <Receipt size={14} />
               Historik
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 text-xs text-muted-foreground hover:text-destructive"
-              onClick={onLogout}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => void onLogout()}
+              className="inline-flex min-h-[38px] items-center justify-center gap-1.5 rounded-full border border-[#E3E9EF] text-xs font-semibold text-[#7D8794] transition hover:border-red-200 hover:bg-red-50 hover:text-red-500"
             >
-              <LogOut className="h-3.5 w-3.5" />
+              <LogOut size={14} />
               Logga ut
-            </Button>
+            </button>
           </div>
         </div>
       ) : (
-        <form className="space-y-3" onSubmit={handleLoginSubmit}>
+        <form
+          onSubmit={handleLoginSubmit}
+          className="space-y-4"
+        >
           <div>
+            <div className="mb-3 flex items-center gap-2.5">
+              <div className="grid h-9 w-9 place-items-center rounded-[12px] bg-[#0B72FE]/10 text-[#0B72FE]">
+                <Building2 size={16} />
+              </div>
+
+              <div>
+                <h2 className="text-sm font-semibold text-[#171C25]">
+                  Företagsinloggning
+                </h2>
+
+                <p className="mt-0.5 text-[11px] text-[#7D8794]">
+                  Se era priser och villkor.
+                </p>
+              </div>
+            </div>
+
             <label
               htmlFor="customer-id"
-              className="block text-sm font-medium text-foreground"
+              className="mb-2 block text-xs font-medium text-[#667181]"
             >
-              Företagsinloggning
+              Kund-ID
             </label>
-            <p className="text-xs text-muted-foreground">
-              Logga in med ditt kund-ID för avtalspriser.
-            </p>
-          </div>
 
-          <div className="flex gap-2">
-            <Input
+            <input
               id="customer-id"
               value={customerId}
-              onChange={(e) => setCustomerId(e.target.value)}
+              onChange={(event) =>
+                setCustomerId(event.target.value)
+              }
               placeholder="t.ex. CP-XXXX"
               autoComplete="off"
               disabled={loggingIn}
-              className="h-9 text-sm"
+              className="
+                h-[44px] w-full rounded-[13px]
+                border border-[#E3E9EF]
+                bg-[#F8FAFB]
+                px-4 text-sm text-[#171C25]
+                outline-none
+                placeholder:text-[#A0ABB5]
+                transition
+                focus:border-[#12B4F0]/50
+                focus:bg-white
+              "
             />
-            <Button
-              type="submit"
-              size="sm"
-              disabled={loggingIn || !customerId.trim()}
-              className="h-9 shrink-0 gap-1.5"
-            >
-              <LogIn className="h-3.5 w-3.5" />
-              {loggingIn ? "Loggar in..." : "Logga in"}
-            </Button>
           </div>
+
+          <button
+            type="submit"
+            disabled={loggingIn || !customerId.trim()}
+            className="
+              flex min-h-[42px] w-full items-center justify-center gap-2
+              rounded-full
+              bg-[#171C25]
+              text-xs font-semibold text-white
+              transition
+              hover:bg-[#2D3444]
+              disabled:cursor-not-allowed
+              disabled:opacity-40
+            "
+          >
+            <LogIn size={14} />
+
+            {loggingIn
+              ? "Loggar in..."
+              : "Logga in"}
+          </button>
         </form>
       )}
     </div>

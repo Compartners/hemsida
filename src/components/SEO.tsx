@@ -1,57 +1,89 @@
 import { useEffect } from "react";
 
-interface SEOProps {
+type SeoProps = {
   title: string;
   description: string;
-  canonical?: string;
-  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
-}
-
-const upsertMeta = (selector: string, attr: string, value: string, content: string) => {
-  let el = document.head.querySelector<HTMLMetaElement>(selector);
-  if (!el) {
-    el = document.createElement("meta");
-    el.setAttribute(attr, value);
-    document.head.appendChild(el);
-  }
-  el.setAttribute("content", content);
+  canonical: string;
 };
 
-const SEO = ({ title, description, canonical, jsonLd }: SEOProps) => {
+export default function Seo({
+  title,
+  description,
+  canonical,
+}: SeoProps) {
   useEffect(() => {
     document.title = title;
 
-    upsertMeta('meta[name="description"]', "name", "description", description);
-    upsertMeta('meta[property="og:title"]', "property", "og:title", title);
-    upsertMeta('meta[property="og:description"]', "property", "og:description", description);
-    upsertMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
-    upsertMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
+    const setMeta = (
+      selector: string,
+      attribute: "name" | "property",
+      key: string,
+      content: string
+    ) => {
+      let element = document.querySelector<HTMLMetaElement>(selector);
 
-    const href = canonical ?? window.location.origin + window.location.pathname;
-    let link = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (!link) {
-      link = document.createElement("link");
-      link.setAttribute("rel", "canonical");
-      document.head.appendChild(link);
-    }
-    link.setAttribute("href", href);
-    upsertMeta('meta[property="og:url"]', "property", "og:url", href);
+      if (!element) {
+        element = document.createElement("meta");
+        element.setAttribute(attribute, key);
+        document.head.appendChild(element);
+      }
 
-    let script: HTMLScriptElement | null = null;
-    if (jsonLd) {
-      script = document.createElement("script");
-      script.type = "application/ld+json";
-      script.text = JSON.stringify(jsonLd);
-      script.dataset.seo = "page";
-      document.head.appendChild(script);
-    }
-
-    return () => {
-      if (script && script.parentNode) script.parentNode.removeChild(script);
+      element.setAttribute("content", content);
     };
-  }, [title, description, canonical, jsonLd]);
+
+    setMeta(
+      'meta[name="description"]',
+      "name",
+      "description",
+      description
+    );
+
+    setMeta(
+      'meta[property="og:title"]',
+      "property",
+      "og:title",
+      title
+    );
+
+    setMeta(
+      'meta[property="og:description"]',
+      "property",
+      "og:description",
+      description
+    );
+
+    setMeta(
+      'meta[property="og:url"]',
+      "property",
+      "og:url",
+      canonical
+    );
+
+    setMeta(
+      'meta[name="twitter:title"]',
+      "name",
+      "twitter:title",
+      title
+    );
+
+    setMeta(
+      'meta[name="twitter:description"]',
+      "name",
+      "twitter:description",
+      description
+    );
+
+    let canonicalLink =
+      document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+
+    if (!canonicalLink) {
+      canonicalLink = document.createElement("link");
+      canonicalLink.rel = "canonical";
+      document.head.appendChild(canonicalLink);
+    }
+
+    canonicalLink.href = canonical;
+  }, [title, description, canonical]);
 
   return null;
-};
-
-export default SEO;
+}

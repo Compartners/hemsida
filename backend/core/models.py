@@ -92,6 +92,20 @@ class Product(models.Model):
         blank=True,
         help_text="Ditt grundläggande utpris (t.ex. inköp x 0.8)."
     )
+
+    PRICE_CLASS_CHOICES = (
+    (1, "Prisklass 1 – 99 kr"),
+    (2, "Prisklass 2 – 149 kr"),
+    (3, "Prisklass 3 – 249 kr"),
+)
+
+    price_class = models.PositiveSmallIntegerField(
+        choices=PRICE_CLASS_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name="Prisklass",
+    )
+
     brand = models.CharField(max_length=100, blank=True)
     gtin = models.CharField(max_length=50, blank=True)
     mpn = models.CharField(max_length=100, blank=True)

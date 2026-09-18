@@ -1,12 +1,30 @@
-import { useState, useMemo, FormEvent } from "react";
-import { X, Sparkles, Plus, ShoppingBag, ArrowRight } from "lucide-react";
+import {
+  FormEvent,
+  useMemo,
+  useState,
+} from "react";
+
+import {
+  ArrowRight,
+  Plus,
+  ShoppingBag,
+  Sparkles,
+  X,
+} from "lucide-react";
+
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { CartItem, Product } from "./types";
+
+import {
+  ApiCompany,
+  createOrder,
+} from "@/lib/api";
+
+import {
+  CartItem,
+  Product,
+} from "./types";
+
 import { formatPrice } from "./utils";
-import { ApiCompany, createOrder } from "@/lib/api";
 
 type CheckoutModalProps = {
   isOpen: boolean;
@@ -27,34 +45,67 @@ export function CheckoutModal({
   onAddToCart,
   onOrderSuccess,
 }: CheckoutModalProps) {
-  const [orderedBy, setOrderedBy] = useState("");
-  const [comment, setComment] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [orderedBy, setOrderedBy] =
+    useState("");
 
-  // Beräkna varukorgspriser
+  const [comment, setComment] =
+    useState("");
+
+  const [submitting, setSubmitting] =
+    useState(false);
+
   const subtotal = useMemo(
-    () => cart.reduce((sum, item) => sum + item.product.price * item.qty, 0),
+    () =>
+      cart.reduce(
+        (sum, item) =>
+          sum +
+          item.product.price *
+            item.qty,
+        0
+      ),
     [cart]
   );
-  const totalWithVat = subtotal * 1.25;
 
-  // Hitta relevanta tillbehör för mersälj (laddare, skydd etc.)
+  const totalWithVat =
+    subtotal * 1.25;
+
   const upsellProducts = useMemo(() => {
-    const cartProductIds = new Set(cart.map((item) => item.product.id));
-    const hasPhoneInCart = cart.some(
-      (item) => item.product.productType === "phone" || item.product.category === "Telefoner"
-    );
+    const cartProductIds =
+      new Set(
+        cart.map(
+          (item) => item.product.id
+        )
+      );
+
+    const hasPhoneInCart =
+      cart.some(
+        (item) =>
+          item.product.productType ===
+            "phone" ||
+          item.product.category ===
+            "Telefoner"
+      );
 
     return allProducts
       .filter((product) => {
-        if (cartProductIds.has(product.id) || !product.stock) return false;
-        
+        if (
+          cartProductIds.has(product.id) ||
+          !product.stock
+        ) {
+          return false;
+        }
+
         const isAccessory =
-          product.productType === "accessory" || product.category === "Tillbehör";
+          product.productType ===
+            "accessory" ||
+          product.category ===
+            "Tillbehör";
 
         if (hasPhoneInCart) {
-          const name = product.name.toLowerCase();
-          const isEssential =
+          const name =
+            product.name.toLowerCase();
+
+          const essential =
             name.includes("laddare") ||
             name.includes("adapter") ||
             name.includes("20w") ||
@@ -62,7 +113,11 @@ export function CheckoutModal({
             name.includes("skal") ||
             name.includes("glas") ||
             name.includes("kabel");
-          return isAccessory && isEssential;
+
+          return (
+            isAccessory &&
+            essential
+          );
         }
 
         return isAccessory;
@@ -72,42 +127,68 @@ export function CheckoutModal({
 
   if (!isOpen) return null;
 
-  const handleSubmitOrder = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmitOrder = async (
+    event: FormEvent
+  ) => {
+    event.preventDefault();
+
     if (!orderedBy.trim()) {
-      toast.error("Vänligen ange vem som beställer.");
+      toast.error(
+        "Vänligen ange vem som beställer."
+      );
       return;
     }
 
     if (cart.length === 0) {
-      toast.error("Varukorgen är tom.");
+      toast.error(
+        "Varukorgen är tom."
+      );
       return;
     }
 
     setSubmitting(true);
+
     try {
-      // Skicka genom säkra apiFetch via createOrder
       await createOrder({
         ordered_by: orderedBy.trim(),
-        organization_number: account?.organization_number || "",
+        organization_number:
+          account?.organization_number ||
+          "",
         comment: comment.trim(),
+
         items: cart.map((item) => ({
-          product_id: item.product.id,
-          product: item.product.id, // Skickar med båda formaten för att passa serializer
+          product_id:
+            item.product.id,
+
+          product:
+            item.product.id,
+
           quantity: item.qty,
-          unit_price: item.product.price,
+
+          unit_price:
+            item.product.price,
         })),
       });
 
-      toast.success("Tack för din beställning! Ordern har registrerats.");
+      toast.success(
+        "Tack för din beställning! Ordern har registrerats."
+      );
+
+      setOrderedBy("");
+      setComment("");
+
       onOrderSuccess();
       onClose();
-    } catch (err) {
-      console.error("Order error:", err);
+    } catch (error) {
+      console.error(
+        "Order error:",
+        error
+      );
+
       toast.error(
-        err instanceof Error
-          ? err.message
-          : "Kunde inte slutföra beställningen. Kontrollera att du är inloggad."
+        error instanceof Error
+          ? error.message
+          : "Kunde inte slutföra beställningen."
       );
     } finally {
       setSubmitting(false);
@@ -115,195 +196,310 @@ export function CheckoutModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity"
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      <button
+        type="button"
         onClick={onClose}
+        aria-label="Stäng kassan"
+        className="absolute inset-0 bg-[#050607]/70 backdrop-blur-sm"
       />
 
-      {/* Modal Dialog */}
-      <div className="relative flex max-h-[95vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-2xl">
-        
+      <div className="relative flex max-h-[95vh] w-full max-w-[1000px] flex-col overflow-hidden rounded-[28px] border border-[#E3E9EF] bg-white shadow-[0_35px_110px_rgba(0,0,0,0.32)]">
+
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border/80 px-6 py-4">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <ShoppingBag className="h-4 w-4" />
+        <div className="flex items-center justify-between border-b border-[#E3E9EF] px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-[13px] bg-[#0B72FE]/10 text-[#0B72FE]">
+              <ShoppingBag size={17} />
             </div>
+
             <div>
-              <h2 className="text-base font-semibold text-foreground sm:text-lg">Kassa & Beställning</h2>
-              <p className="text-xs text-muted-foreground">{account?.name} ({account?.company_code})</p>
+              <h2 className="text-lg font-semibold tracking-[-0.025em] text-[#171C25]">
+                Kassa & beställning
+              </h2>
+
+              <p className="mt-0.5 text-xs text-[#8A96A3]">
+                {account?.name}
+                {account?.company_code &&
+                  ` · ${account.company_code}`}
+              </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            className="grid h-9 w-9 place-items-center rounded-full text-[#7D8794] transition hover:bg-[#F4F7FA] hover:text-[#171C25]"
           >
-            <X className="h-5 w-5" />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Innehåll */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
-          
-          {/* 1. Översikt över valda artiklar */}
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-              Valda artiklar i ordern
-            </h3>
-            <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-muted/20 px-4 py-1">
+        {/* Scroll */}
+        <div className="flex-1 space-y-7 overflow-y-auto p-6">
+
+          {/* Cart products */}
+          <section>
+            <p className="mb-3 font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-[#8A96A3]">
+              Valda artiklar
+            </p>
+
+            <div className="divide-y divide-[#E3E9EF] rounded-[18px] border border-[#E3E9EF] bg-[#F8FAFB] px-4">
               {cart.map((item) => (
-                <div key={item.product.id} className="flex items-center justify-between py-2.5 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-primary">{item.qty}×</span>
-                    <span className="font-medium text-foreground line-clamp-1">{item.product.name}</span>
+                <div
+                  key={item.product.id}
+                  className="flex items-center justify-between gap-4 py-3"
+                >
+                  <div className="min-w-0 text-sm">
+                    <span className="mr-2 font-semibold text-[#0B72FE]">
+                      {item.qty}×
+                    </span>
+
+                    <span className="text-[#4E5968]">
+                      {item.product.name}
+                    </span>
                   </div>
-                  <span className="font-mono text-xs font-semibold text-foreground shrink-0">
-                    {formatPrice(item.product.price * item.qty)}
+
+                  <span className="shrink-0 text-xs font-semibold text-[#171C25]">
+                    {formatPrice(
+                      item.product.price *
+                        item.qty
+                    )}
                   </span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* 2. Mersälj */}
+          {/* Upsell */}
           {upsellProducts.length > 0 && (
-            <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-b from-amber-500/5 to-transparent p-4 sm:p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="h-4 w-4 text-amber-500" />
-                <h4 className="text-sm font-semibold text-foreground">
-                  Glöm inte tillbehören! Snabbladdare & skydd
-                </h4>
+            <section className="rounded-[22px] border border-[#E3E9EF] bg-[#F8FAFB] p-5">
+              <div className="mb-4 flex items-center gap-2">
+                <Sparkles
+                  size={16}
+                  className="text-[#0B72FE]"
+                />
+
+                <h3 className="text-sm font-semibold text-[#171C25]">
+                  Komplettera beställningen
+                </h3>
               </div>
 
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-                {upsellProducts.map((accessory) => (
-                  <div
-                    key={accessory.id}
-                    className="flex flex-col justify-between rounded-xl border border-border/70 bg-card p-3 shadow-sm transition hover:border-primary/40"
-                  >
-                    <div>
-                      <div className="aspect-video w-full rounded-lg bg-zinc-50 dark:bg-zinc-900/40 p-2 mb-2 flex items-center justify-center">
-                        {accessory.image ? (
+              <div className="grid gap-3 sm:grid-cols-3">
+                {upsellProducts.map(
+                  (product) => (
+                    <article
+                      key={product.id}
+                      className="flex flex-col rounded-[16px] border border-[#E3E9EF] bg-white p-3"
+                    >
+                      <div className="flex aspect-video items-center justify-center rounded-[12px] bg-[#F8FAFB] p-2">
+                        {product.image ? (
                           <img
-                            src={accessory.image}
-                            alt={accessory.name}
-                            className="h-full w-full object-contain mix-blend-multiply dark:mix-blend-normal"
+                            src={
+                              product.image
+                            }
+                            alt={
+                              product.name
+                            }
+                            className="h-full w-full object-contain mix-blend-multiply"
                           />
                         ) : (
-                          <span className="text-[10px] text-muted-foreground">Original</span>
+                          <span className="font-mono text-[9px] uppercase text-[#9BA6B0]">
+                            Original
+                          </span>
                         )}
                       </div>
-                      <p className="line-clamp-2 text-xs font-medium text-foreground leading-snug" title={accessory.name}>
-                        {accessory.name}
-                      </p>
-                    </div>
 
-                    <div className="mt-3 flex items-center justify-between pt-2 border-t border-border/40">
-                      <span className="text-xs font-bold text-foreground">
-                        {formatPrice(accessory.price)}
-                      </span>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => {
-                          onAddToCart(accessory);
-                          toast.success(`${accessory.name} lades till!`);
-                        }}
-                        className="h-7 px-2 text-[11px] gap-1 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground"
-                      >
-                        <Plus className="h-3 w-3" />
-                        Lägg till
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                      <p className="mt-3 line-clamp-2 text-xs font-medium leading-5 text-[#171C25]">
+                        {product.name}
+                      </p>
+
+                      <div className="mt-auto flex items-center justify-between gap-2 pt-4">
+                        <span className="text-xs font-semibold text-[#171C25]">
+                          {formatPrice(
+                            product.price
+                          )}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onAddToCart(
+                              product
+                            );
+
+                            toast.success(
+                              `${product.name} lades till!`
+                            );
+                          }}
+                          className="inline-flex h-8 items-center gap-1 rounded-full bg-[#0B72FE]/10 px-3 text-[10px] font-semibold text-[#0B72FE] transition hover:bg-[#0B72FE] hover:text-white"
+                        >
+                          <Plus size={12} />
+                          Lägg till
+                        </button>
+                      </div>
+                    </article>
+                  )
+                )}
               </div>
-            </div>
+            </section>
           )}
 
-          {/* 3. Formulär */}
-          <form id="order-form" onSubmit={handleSubmitOrder} className="space-y-4">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {/* Details */}
+          <form
+            id="order-form"
+            onSubmit={handleSubmitOrder}
+            className="space-y-5"
+          >
+            <p className="font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-[#8A96A3]">
               Beställningsuppgifter
-            </h3>
+            </p>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-xs font-medium text-foreground mb-1">
-                  Beställare / Referensnamn *
-                </label>
-                <Input
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Beställare / referensnamn *">
+                <input
                   required
-                  placeholder="t.ex. Johan Andersson"
                   value={orderedBy}
-                  onChange={(e) => setOrderedBy(e.target.value)}
-                  className="h-9 text-sm"
+                  onChange={(event) =>
+                    setOrderedBy(
+                      event.target.value
+                    )
+                  }
+                  placeholder="t.ex. Johan Andersson"
+                  className={inputClasses}
                 />
-              </div>
+              </Field>
 
-              <div>
-                <label className="block text-xs font-medium text-foreground mb-1">
-                  Organisationsnummer
-                </label>
-                <Input
+              <Field label="Organisationsnummer">
+                <input
                   disabled
-                  value={account?.organization_number || "Ej angivet"}
-                  className="h-9 text-sm bg-muted text-muted-foreground"
+                  value={
+                    account?.organization_number ||
+                    "Ej angivet"
+                  }
+                  className={`${inputClasses} cursor-not-allowed bg-[#F4F7FA] text-[#8A96A3]`}
                 />
-              </div>
+              </Field>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-foreground mb-1">
-                Kostnadsställe / Märkning / Kommentar (valfritt)
-              </label>
-              <Textarea
-                placeholder="t.ex. Kostnadsställe IT, levereras till våning 3..."
+            <Field label="Kostnadsställe / märkning / kommentar">
+              <textarea
+                rows={3}
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                className="text-sm resize-none"
-                rows={2}
+                onChange={(event) =>
+                  setComment(
+                    event.target.value
+                  )
+                }
+                placeholder="t.ex. Kostnadsställe IT, levereras till våning 3..."
+                className={`${inputClasses} min-h-[100px] resize-none py-3`}
               />
-            </div>
+            </Field>
           </form>
-
         </div>
 
         {/* Footer */}
-        <div className="border-t border-border/80 bg-card/60 p-5 sm:px-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="border-t border-[#E3E9EF] bg-[#F8FAFB] px-6 py-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="flex items-baseline gap-2">
-                <span className="text-xs text-muted-foreground">Totalt exkl. moms:</span>
-                <span className="text-lg font-bold text-foreground">{formatPrice(subtotal)}</span>
+                <span className="text-xs text-[#7D8794]">
+                  Totalt exkl. moms
+                </span>
+
+                <strong className="text-xl tracking-[-0.03em] text-[#171C25]">
+                  {formatPrice(
+                    subtotal
+                  )}
+                </strong>
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Inkl. 25% moms: {formatPrice(totalWithVat)}
+
+              <p className="mt-1 text-[10px] text-[#8A96A3]">
+                Inkl. 25% moms:{" "}
+                {formatPrice(
+                  totalWithVat
+                )}
               </p>
             </div>
 
-            <div className="flex gap-2">
-              <Button type="button" variant="outline" onClick={onClose} disabled={submitting}>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={submitting}
+                className="min-h-[44px] rounded-full border border-[#E3E9EF] bg-white px-5 text-xs font-semibold text-[#667181] transition hover:border-[#CBD6DE] hover:text-[#171C25]"
+              >
                 Fortsätt handla
-              </Button>
-              <Button
+              </button>
+
+              <button
                 form="order-form"
                 type="submit"
-                disabled={submitting || cart.length === 0}
-                className="gap-1.5 shadow-md"
+                disabled={
+                  submitting ||
+                  cart.length === 0
+                }
+                className="
+                  group inline-flex min-h-[44px] items-center justify-center gap-2
+                  rounded-full
+                  bg-gradient-to-r from-[#0B72FE] via-[#12B4F0] to-[#2CCEC2]
+                  px-5
+                  text-xs font-semibold text-white
+                  transition
+                  hover:-translate-y-0.5
+                  disabled:cursor-not-allowed
+                  disabled:opacity-50
+                "
               >
-                {submitting ? "Skickar order..." : "Bekräfta beställning"}
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+                {submitting
+                  ? "Skickar order..."
+                  : "Bekräfta beställning"}
+
+                {!submitting && (
+                  <ArrowRight
+                    size={14}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
+                )}
+              </button>
             </div>
           </div>
         </div>
-
       </div>
     </div>
+  );
+}
+
+const inputClasses = `
+  h-[46px]
+  w-full
+  rounded-[13px]
+  border
+  border-[#E3E9EF]
+  bg-white
+  px-4
+  text-sm
+  text-[#171C25]
+  outline-none
+  placeholder:text-[#9BA6B0]
+  transition
+  focus:border-[#12B4F0]/60
+`;
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label>
+      <span className="mb-2 block text-xs font-medium text-[#667181]">
+        {label}
+      </span>
+
+      {children}
+    </label>
   );
 }

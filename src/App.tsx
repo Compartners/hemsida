@@ -1,80 +1,236 @@
 import { useEffect } from "react";
+import "./App.css";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner, toast } from "@/components/ui/sonner";
+import {
+  Toaster as Sonner,
+  toast,
+} from "@/components/ui/sonner";
+
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { onSessionExpired } from "./lib/api"; // Anpassa sökvägen till din api.ts
+
+import { onSessionExpired } from "./lib/api";
+
+/* Pages */
 import Index from "./pages/Index";
-import Careers from "./pages/Careers";
-import MobilaVaxlar from "./pages/MobilaVaxlar";
-import Korjournaler from "./pages/Korjournaler";
-import Support from "./pages/Support";
-import NotFound from "./pages/NotFound";
-import BackToTop from "./components/BackToTop";
+import Tjanster from "./pages/Tjanster";
 import Webbshop from "./pages/Webbshop";
+import Careers from "./pages/Careers";
+import NotFound from "./pages/NotFound";
+
+/* Global */
+
+
 
 const queryClient = new QueryClient();
 
-// Nollställer scroll-positionen vid varje sidbyte
-function ScrollToTop() {
-  const { pathname } = useLocation();
+
+/* =========================================================
+   SCROLL MANAGEMENT
+   ========================================================= */
+
+function ScrollManager() {
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    /*
+     * Om URL:en innehåller t.ex.
+     * /tjanster#ai
+     *
+     * scrollar vi till den sektionen.
+     */
+    if (hash) {
+      const id = hash.replace("#", "");
+
+      const scrollToSection = () => {
+        const element = document.getElementById(id);
+
+        if (element) {
+          element.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      };
+
+      /*
+       * Ger sidan en liten stund att renderas
+       * innan vi försöker hitta sektionen.
+       */
+      const timeout = window.setTimeout(
+        scrollToSection,
+        100
+      );
+
+      return () => window.clearTimeout(timeout);
+    }
+
+    /*
+     * Vanligt sidbyte:
+     * börja högst upp.
+     */
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: "instant",
+      behavior: "auto",
     });
-  }, [pathname]);
+  }, [pathname, hash]);
 
   return null;
 }
 
-// Lyssnar globalt på utgångna Django-sessioner (401)
+
+/* =========================================================
+   SESSION EXPIRY
+   ========================================================= */
+
 function SessionExpiryListener() {
   const navigate = useNavigate();
 
   useEffect(() => {
     onSessionExpired(() => {
-      // 1. Töm TanStack Query cache så gammal företagsdata inte ligger kvar
+      /*
+       * Töm gammal företagsdata.
+       */
       queryClient.clear();
 
-      // 2. Meddela användaren
-      toast.error("Din session har löpt ut. Logga in igen.");
+      /*
+       * Informera användaren.
+       */
+      toast.error(
+        "Din session har löpt ut. Logga in igen."
+      );
 
-      // 3. Navigera till inloggningssidan
-      navigate("/webshop");
+      /*
+       * Webbshop innehåller fortfarande
+       * den autentiserade delen.
+       */
+      navigate("/webbshop");
     });
   }, [navigate]);
 
   return null;
 }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <SessionExpiryListener />
-        <div className="dark">
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+
+        <Toaster />
+        <Sonner />
+
+        <BrowserRouter>
+
+          <ScrollManager />
+
+          <SessionExpiryListener />
+
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/jobba-hos-oss" element={<Careers />} />
-            <Route path="/mobila-vaxlar" element={<MobilaVaxlar />} />
-            <Route path="/webshop" element={<Webbshop />} />
-            <Route path="/korjournaler" element={<Korjournaler />} />
-            <Route path="/support" element={<Support />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+
+            {/* Main site */}
+            <Route
+              path="/"
+              element={<Index />}
+            />
+
+            <Route
+              path="/tjanster"
+              element={<Tjanster />}
+            />
+
+            <Route
+              path="/om-oss"
+              element={<Careers />}
+            />
+
+
+            {/* Webbshop / customer area */}
+            <Route
+              path="/webbshop"
+              element={<Webbshop />}
+            />
+
+
+            {/* =========================================
+                LEGACY URLS
+
+                Behåll gamla länkar fungerande.
+                ========================================= */}
+
+            <Route
+              path="/mobila-vaxlar"
+              element={
+                <Navigate
+                  to="/tjanster#telefoni"
+                  replace
+                />
+              }
+            />
+
+            <Route
+              path="/korjournaler"
+              element={
+                <Navigate
+                  to="/tjanster#mobilitet"
+                  replace
+                />
+              }
+            />
+
+            <Route
+              path="/support"
+              element={
+                <Navigate
+                  to="/tjanster#support"
+                  replace
+                />
+              }
+            />
+
+            <Route
+              path="/ai"
+              element={
+                <Navigate
+                  to="/tjanster#ai"
+                  replace
+                />
+              }
+            />
+
+
+            {/* Catch-all */}
+            <Route
+              path="*"
+              element={<NotFound />}
+            />
+
           </Routes>
-          <BackToTop />
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+
+
+        </BrowserRouter>
+
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
