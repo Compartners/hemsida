@@ -495,7 +495,12 @@ class Product(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.name} ({self.display_price} SEK)"
+        price = self.display_price
+
+        if price is None:
+            return self.name or "Ny produkt"
+
+        return f"{self.name} ({price:.2f} SEK)"
 
     # ---------------------------------------------------------
     # PRISBERÄKNING
