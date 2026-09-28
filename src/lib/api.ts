@@ -1,5 +1,5 @@
 const API_URL =
-  import.meta.env.VITE_API_URL || "https://hemsida-swart-six.vercel.app/om-oss";
+  import.meta.env.VITE_API_URL || "https://hemsida-swart-six.vercel.app/api";
 
 let csrfToken: string | null = null;
 let csrfPromise: Promise<string> | null = null;
