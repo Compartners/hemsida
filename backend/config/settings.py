@@ -131,6 +131,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8080",
     "https://compartners-demo.netlify.app",
         "https://hemsida-vm1t.vercel.app",
+        "https://hemsida-swart-six.vercel.app",
 
 ]
 
@@ -139,6 +140,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8080",
     "https://compartners-demo.netlify.app",
         "https://hemsida-vm1t.vercel.app",
+        "https://hemsida-swart-six.vercel.app",
 
 ]
 
