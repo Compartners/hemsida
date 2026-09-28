@@ -505,23 +505,34 @@ class ProductAdmin(admin.ModelAdmin):
     ]
 
     @admin.display(
-        description="Beräknat inköp",
-        ordering="base_price",
-    )
+    description="Beräknat inköp",
+    ordering="base_price",
+)
     def effective_cost_admin(self, obj):
-        if not obj:
+        if not obj or obj.base_price is None:
             return "-"
 
-        return f"{obj.effective_cost:.2f} kr"
+        value = obj.effective_cost
+
+        if value is None:
+            return "-"
+
+        return f"{value:.2f} kr"
+
 
     @admin.display(
         description="Beräknat utpris"
     )
     def calculated_price_admin(self, obj):
-        if not obj:
+        if not obj or obj.base_price is None:
             return "-"
 
-        return f"{obj.calculated_auto_price:.2f} kr"
+        value = obj.calculated_auto_price
+
+        if value is None:
+            return "-"
+
+        return f"{value:.2f} kr"
 
     # ---------------------------------------------------------
     # PRODUKTTYP
