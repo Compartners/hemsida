@@ -186,7 +186,8 @@ CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
 # STATIC FILES & EMAIL
 # ============================================================
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 import os
