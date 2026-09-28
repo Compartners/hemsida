@@ -4,23 +4,28 @@ type SeoProps = {
   title: string;
   description: string;
   canonical: string;
+  noindex?: boolean;
 };
+
+const DEFAULT_ROBOTS = "index, follow, max-image-preview:large";
 
 export default function Seo({
   title,
   description,
   canonical,
+  noindex = false,
 }: SeoProps) {
   useEffect(() => {
     document.title = title;
 
     const setMeta = (
-      selector: string,
       attribute: "name" | "property",
       key: string,
       content: string
     ) => {
-      let element = document.querySelector<HTMLMetaElement>(selector);
+      let element = document.querySelector<HTMLMetaElement>(
+        `meta[${attribute}="${key}"]`
+      );
 
       if (!element) {
         element = document.createElement("meta");
@@ -31,47 +36,15 @@ export default function Seo({
       element.setAttribute("content", content);
     };
 
-    setMeta(
-      'meta[name="description"]',
-      "name",
-      "description",
-      description
-    );
+    setMeta("name", "description", description);
+    setMeta("name", "robots", noindex ? "noindex, nofollow" : DEFAULT_ROBOTS);
 
-    setMeta(
-      'meta[property="og:title"]',
-      "property",
-      "og:title",
-      title
-    );
+    setMeta("property", "og:title", title);
+    setMeta("property", "og:description", description);
+    setMeta("property", "og:url", canonical);
 
-    setMeta(
-      'meta[property="og:description"]',
-      "property",
-      "og:description",
-      description
-    );
-
-    setMeta(
-      'meta[property="og:url"]',
-      "property",
-      "og:url",
-      canonical
-    );
-
-    setMeta(
-      'meta[name="twitter:title"]',
-      "name",
-      "twitter:title",
-      title
-    );
-
-    setMeta(
-      'meta[name="twitter:description"]',
-      "name",
-      "twitter:description",
-      description
-    );
+    setMeta("name", "twitter:title", title);
+    setMeta("name", "twitter:description", description);
 
     let canonicalLink =
       document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
@@ -83,7 +56,7 @@ export default function Seo({
     }
 
     canonicalLink.href = canonical;
-  }, [title, description, canonical]);
+  }, [title, description, canonical, noindex]);
 
   return null;
 }

@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /webbshop/
 
 Sitemap: https://compartners.se/sitemap.xml
