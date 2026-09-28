@@ -317,7 +317,8 @@ class PriceClassAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-     def get_urls(self):
+
+    def get_urls(self):
         urls = super().get_urls()
 
         custom_urls = [
@@ -358,7 +359,7 @@ class ProductAdmin(admin.ModelAdmin):
         return redirect(
             "admin:core_product_changelist"
         )
-        
+
     list_display = (
         "name",
         "brand",
