@@ -12,7 +12,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 900);
+      setScrolled(window.scrollY > 100);
     };
 
     handleScroll();
@@ -37,7 +37,7 @@ export default function Navbar() {
         transition-all duration-300
         ${
           scrolled
-            ? "border-b border-[#E3E9EF]/80 bg-white/90 shadow-[0_8px_30px_rgba(19,31,49,0.05)] backdrop-blur-xl"
+            ? "border-b border-[#E3E9EF]/80 bg-white/50  shadow-[0_8px_30px_rgba(19,31,49,0.05)] backdrop-blur-xl"
             : "bg-transparent"
         }
       `}
@@ -63,7 +63,7 @@ export default function Navbar() {
               text-sm font-medium transition
               ${
                 scrolled
-                  ? "text-[#667181] hover:text-[#171C25]"
+                  ? "text-[#353a43] hover:text-[#171C25]"
                   : "text-white/70 hover:text-white"
               }
             `}
@@ -77,7 +77,7 @@ export default function Navbar() {
               text-sm font-medium transition
               ${
                 scrolled
-                  ? "text-[#667181] hover:text-[#171C25]"
+                  ? "text-[#353a43] hover:text-[#171C25]"
                   : "text-white/70 hover:text-white"
               }
             `}
@@ -91,7 +91,7 @@ export default function Navbar() {
               text-sm font-medium transition
               ${
                 scrolled
-                  ? "text-[#667181] hover:text-[#171C25]"
+                  ? "text-[#353a43] hover:text-[#171C25]"
                   : "text-white/70 hover:text-white"
               }
             `}
@@ -105,7 +105,7 @@ export default function Navbar() {
               text-sm font-medium transition
               ${
                 scrolled
-                  ? "text-[#667181] hover:text-[#171C25]"
+                  ? "text-[#353a43] hover:text-[#171C25]"
                   : "text-white/70 hover:text-white"
               }
             `}
@@ -119,7 +119,7 @@ export default function Navbar() {
               text-sm font-medium transition
               ${
                 scrolled
-                  ? "text-[#667181] hover:text-[#171C25]"
+                  ? "text-[#353a43] hover:text-[#171C25]"
                   : "text-white/70 hover:text-white"
               }
             `}

@@ -243,7 +243,7 @@ const WhyCompartners = () => {
             </h2>
           </div>
 
-          <p className="m-0 max-w-[520px] text-[16px] leading-7 text-[#667181] md:text-[17px] md:leading-8">
+          <p className="m-0 max-w-[520px] text-[16px] leading-7 text-[#24272b] md:text-[17px] md:leading-8">
             Teknik ska göra vardagen enklare. Därför börjar vi inte
             i produkten — vi börjar i er verksamhet, era behov och
             hur ni faktiskt arbetar.
@@ -296,7 +296,7 @@ const WhyCompartners = () => {
                   {value.title}
                 </h3>
 
-                <p className="m-0 max-w-[360px] leading-7 text-[#667181]">
+                <p className="m-0 max-w-[360px] leading-7 text-[#37393c]">
                   {value.text}
                 </p>
               </div>

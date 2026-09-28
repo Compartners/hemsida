@@ -145,7 +145,7 @@ const Hero = () => {
             className="
               max-w-[950px]
               text-[52px]
-              font-semibold
+              font-semi-bold
               leading-[0.94]
               tracking-[-0.065em]
 
@@ -157,7 +157,7 @@ const Hero = () => {
             Kommunikation som
             <br />
 
-            <span className="font-[450] text-white/90">
+            <span className="font-semi-bold text-white/90">
               skapar klarhet.
             </span>
           </h1>
@@ -170,7 +170,7 @@ const Hero = () => {
               max-w-[670px]
               text-[16px]
               leading-7
-              text-white/70
+              text-white/80
 
               md:text-[18px]
               md:leading-8
@@ -339,7 +339,7 @@ const Hero = () => {
           xl:flex
         "
       >
-        <span>Nordisk klarhet</span>
+        <span>Nordisk minimalism</span>
 
         <span className="h-px w-6 bg-white/15" />
 

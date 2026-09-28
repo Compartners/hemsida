@@ -49,7 +49,7 @@ export default function MethodSection() {
               key={step.number}
               className="grid gap-4 border-b border-white/10 py-6 sm:grid-cols-[42px_140px_1fr] sm:gap-5 md:py-7"
             >
-              <span className="font-mono text-[10px] text-white/25">
+              <span className="font-mono text-[10px] text-white/45">
                 {step.number}
               </span>
 
@@ -57,7 +57,7 @@ export default function MethodSection() {
                 {step.title}
               </h3>
 
-              <p className="m-0 text-sm leading-6 text-white/50 sm:col-auto col-span-full">
+              <p className="m-0 text-sm leading-6 text-white/70 sm:col-auto col-span-full">
                 {step.text}
               </p>
             </article>

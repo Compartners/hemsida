@@ -22,20 +22,33 @@ class ProductSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "external_id",
+
             "product_type",
-            "price",
+            "shop_category",
+            "model_family",
+
             "base_price",
+            "price",
+
             "brand",
             "gtin",
             "mpn",
+
             "image_url",
             "product_url",
+
             "availability",
             "active",
+
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+
+        read_only_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+        ]
 
     def _get_current_company(self, request):
         if not request:
@@ -43,24 +56,32 @@ class ProductSerializer(serializers.ModelSerializer):
 
         if not hasattr(request, "_cached_company"):
             company_id = request.session.get("company_id")
+
             if company_id:
                 try:
-                    request._cached_company = Company.objects.get(pk=company_id)
+                    request._cached_company = Company.objects.get(
+                        pk=company_id
+                    )
                 except Company.DoesNotExist:
                     request._cached_company = None
             else:
                 request._cached_company = None
+
         return request._cached_company
 
     def get_price(self, obj):
         request = self.context.get("request")
         company = self._get_current_company(request)
 
+        # Inloggad företagskund:
+        # använd Compartners-priset exkl. moms
+        # + företagets eventuella påslag.
         if company:
-            # Räknar ut påslaget för produkten
             calculated = company.calculate_price(obj)
             return float(calculated)
 
+        # Utloggad:
+        # visa feedpriset inklusive moms.
         return float(obj.base_price)
 
 

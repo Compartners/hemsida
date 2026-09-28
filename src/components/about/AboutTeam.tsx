@@ -1,5 +1,8 @@
 import { Mail, Phone } from "lucide-react";
 
+import hovdingen from "../../assets/hovdingen.png";
+
+
 export default function AboutTeam() {
   return (
     <section className="bg-white py-20 md:py-24 lg:py-32">
@@ -9,10 +12,12 @@ export default function AboutTeam() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(11,114,254,0.10),transparent_35%)]" />
 
           <div className="absolute inset-0 grid place-items-center">
-            <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-[#7D8794]">
-              Compartners team photo
-            </span>
-          </div>
+  <img
+    src={hovdingen}
+    alt="Hovdingen"
+    className="h-full w-full object-contain"
+  />
+</div>
 
           <div className="absolute bottom-5 left-5 right-5 rounded-[20px] border border-white/60 bg-white/85 p-5 shadow-lg backdrop-blur-xl md:bottom-7 md:left-7 md:right-auto md:max-w-[310px]">
             <span className="block font-mono text-[9px] uppercase tracking-[0.14em] text-[#8A96A3]">
