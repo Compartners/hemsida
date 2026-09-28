@@ -21,6 +21,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
+    "hemsida-vm1t-omii3owff-com-partners.vercel.app",
 ]
 
 
@@ -127,12 +128,16 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "https://compartners-demo.netlify.app",
+        "hemsida-vm1t-omii3owff-com-partners.vercel.app",
+
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "https://compartners-demo.netlify.app",
+        "hemsida-vm1t-omii3owff-com-partners.vercel.app",
+
 ]
 
 

@@ -1,5 +1,5 @@
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+  import.meta.env.VITE_API_URL || "hemsida-vm1t-omii3owff-com-partners.vercel.app/api";
 
 let csrfToken: string | null = null;
 let csrfPromise: Promise<string> | null = null;
