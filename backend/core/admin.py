@@ -1,6 +1,11 @@
 from decimal import Decimal
 
-from django.contrib import admin
+from io import StringIO
+
+from django.contrib import admin, messages
+from django.core.management import call_command
+from django.shortcuts import redirect
+from django.urls import path
 from django.utils.crypto import get_random_string
 
 from .models import (
@@ -312,6 +317,48 @@ class PriceClassAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+     def get_urls(self):
+        urls = super().get_urls()
+
+        custom_urls = [
+            path(
+                "sync-telefonshoppen/",
+                self.admin_site.admin_view(
+                    self.sync_telefonshoppen
+                ),
+                name="sync-telefonshoppen",
+            ),
+        ]
+
+        return custom_urls + urls
+
+    def sync_telefonshoppen(self, request):
+        output = StringIO()
+
+        try:
+            call_command(
+                "sync_telefonshoppen",
+                stdout=output,
+                stderr=output,
+            )
+
+            self.message_user(
+                request,
+                "Telefonshoppen synkades korrekt.",
+                messages.SUCCESS,
+            )
+
+        except Exception as exc:
+            self.message_user(
+                request,
+                f"Telefonshoppen-sync misslyckades: {exc}",
+                messages.ERROR,
+            )
+
+        return redirect(
+            "admin:core_product_changelist"
+        )
+        
     list_display = (
         "name",
         "brand",
