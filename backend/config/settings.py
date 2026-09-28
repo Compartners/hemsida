@@ -79,11 +79,13 @@ WSGI_APPLICATION = "config.wsgi.application"
 # DATABASE
 # ============================================================
 
+import os
+import dj_database_url
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("POSTGRES_URL_NON_POOLING")
+    )
 }
 
 
@@ -128,7 +130,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "https://compartners-demo.netlify.app",
-        "hemsida-vm1t.vercel.app",
+        "https://hemsida-vm1t.vercel.app",
 
 ]
 
@@ -136,7 +138,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "https://compartners-demo.netlify.app",
-        "hemsida-vm1t.vercel.app",
+        "https://hemsida-vm1t.vercel.app",
 
 ]
 
