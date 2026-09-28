@@ -327,7 +327,7 @@ class ProductAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(
                     self.sync_telefonshoppen
                 ),
-                name="sync-telefonshoppen",
+                name="sync_telefonshoppen",
             ),
         ]
 
@@ -345,14 +345,14 @@ class ProductAdmin(admin.ModelAdmin):
 
             self.message_user(
                 request,
-                "Telefonshoppen synkades korrekt.",
+                "Produktdata från Telefonshoppen har hämtats.",
                 messages.SUCCESS,
             )
 
         except Exception as exc:
             self.message_user(
                 request,
-                f"Telefonshoppen-sync misslyckades: {exc}",
+                f"Importen misslyckades: {exc}",
                 messages.ERROR,
             )
 
