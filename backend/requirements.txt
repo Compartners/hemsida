@@ -10,3 +10,4 @@ psycopg==3.3.4
 psycopg-binary==3.3.4
 python-dotenv==1.2.3
 dj-database-url
+requests==2.34.2
