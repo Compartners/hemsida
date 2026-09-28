@@ -3,9 +3,8 @@ from decimal import Decimal
 from io import StringIO
 
 from django.contrib import admin, messages
+from django.contrib.admin import helpers
 from django.core.management import call_command
-from django.shortcuts import redirect
-from django.urls import path
 from django.utils.crypto import get_random_string
 
 from .models import (
@@ -318,48 +317,6 @@ class PriceClassAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
-    def get_urls(self):
-        urls = super().get_urls()
-
-        custom_urls = [
-            path(
-                "sync-telefonshoppen/",
-                self.admin_site.admin_view(
-                    self.sync_telefonshoppen
-                ),
-                name="sync_telefonshoppen",
-            ),
-        ]
-
-        return custom_urls + urls
-
-    def sync_telefonshoppen(self, request):
-        output = StringIO()
-
-        try:
-            call_command(
-                "sync_telefonshoppen",
-                stdout=output,
-                stderr=output,
-            )
-
-            self.message_user(
-                request,
-                "Produktdata från Telefonshoppen har hämtats.",
-                messages.SUCCESS,
-            )
-
-        except Exception as exc:
-            self.message_user(
-                request,
-                f"Importen misslyckades: {exc}",
-                messages.ERROR,
-            )
-
-        return redirect(
-            "admin:core_product_changelist"
-        )
-
     list_display = (
         "name",
         "brand",
@@ -495,6 +452,7 @@ class ProductAdmin(admin.ModelAdmin):
     )
 
     actions = [
+        "sync_telefonshoppen_action",
         "mark_as_phone",
         "mark_as_accessory",
         "recalculate_prices",
@@ -504,10 +462,64 @@ class ProductAdmin(admin.ModelAdmin):
         "deactivate_products",
     ]
 
+    # ---------------------------------------------------------
+    # SYNC FRÅN TELEFONSHOPPEN
+    # ---------------------------------------------------------
+
+    def changelist_view(self, request, extra_context=None):
+        """
+        Django kräver minst en markerad rad för att köra en action.
+        Sync-actionen behöver ingen markering, så vi fyller i en
+        åt dig om ingen är vald.
+        """
+        if (
+            request.method == "POST"
+            and request.POST.get("action") == "sync_telefonshoppen_action"
+            and not request.POST.getlist(helpers.ACTION_CHECKBOX_NAME)
+        ):
+            first = Product.objects.values_list("pk", flat=True).first()
+
+            if first is not None:
+                post = request.POST.copy()
+                post.setlist(helpers.ACTION_CHECKBOX_NAME, [str(first)])
+                request._set_post(post)
+
+        return super().changelist_view(request, extra_context)
+
+    @admin.action(
+        description="Hämta data ifrån Telefonshoppen"
+    )
+    def sync_telefonshoppen_action(self, request, queryset):
+        output = StringIO()
+
+        try:
+            call_command(
+                "sync_telefonshoppen",
+                stdout=output,
+                stderr=output,
+            )
+
+            self.message_user(
+                request,
+                "Produktdata från Telefonshoppen har hämtats.",
+                messages.SUCCESS,
+            )
+
+        except Exception as exc:
+            self.message_user(
+                request,
+                f"Importen misslyckades: {exc}",
+                messages.ERROR,
+            )
+
+    # ---------------------------------------------------------
+    # BERÄKNADE FÄLT
+    # ---------------------------------------------------------
+
     @admin.display(
-    description="Beräknat inköp",
-    ordering="base_price",
-)
+        description="Beräknat inköp",
+        ordering="base_price",
+    )
     def effective_cost_admin(self, obj):
         if not obj or obj.base_price is None:
             return "-"
@@ -518,7 +530,6 @@ class ProductAdmin(admin.ModelAdmin):
             return "-"
 
         return f"{value:.2f} kr"
-
 
     @admin.display(
         description="Beräknat utpris"
