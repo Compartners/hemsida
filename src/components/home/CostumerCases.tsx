@@ -57,7 +57,7 @@ export default function CustomerCases() {
                 group
                 relative
                 flex
-                min-h-[380px]
+                min-h-[320px]
                 flex-col
                 overflow-hidden
                 rounded-[24px]
@@ -80,17 +80,11 @@ export default function CustomerCases() {
                 <span className="font-mono text-[10px]">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-
-                <ArrowUpRight
-                  size={18}
-                  strokeWidth={1.6}
-                  className="transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-[#171C25]"
-                />
               </div>
 
               {/* Content */}
               <div className="mt-auto pt-16">
-                <div className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.13em] text-[#0B72FE]">
+                <div className="mb-3 font-mono text-[12px] font-medium uppercase tracking-[0.13em] text-[#0B72FE]">
   {item.company}
 </div>
 

@@ -10,34 +10,33 @@ import {
 const solutions = [
   {
     number: "01",
-    label: "Företagstelefoni",
-    title: "Telefoni som passar verksamheten.",
-    text: "Växel och abonnemang från den operatör som passar er bäst, med en kontakt för allt.",
+    label: "Växel & företagstelefoni",
+    title: "Växel och telefoni, oavsett operatör.",
+    text: "Vi väljer växelplattform och operatör efter er verksamhet, inte tvärtom.",
     href: "/tjanster#telefoni",
     icon: Phone,
   },
   {
     number: "02",
-    label: "AI & automation",
-    title: "Smart teknik som sparar tid.",
-    text: "AI som sammanfattar samtal, fångar upp ärenden och minskar manuellt arbete.",
-    href: "/tjanster#ai",
+    label: "Transkribering",
+    title: "Samtal till anteckningar.",
+    text: "Samtal skrivs ut automatiskt, så ni slipper anteckna och kan söka i det som sagts.", // GISSNING
+    href: "/tjanster#transkribering",
     icon: Bot,
   },
   {
     number: "03",
-    label: "Mobilitet",
-    title: "Smidigare arbete på språng.",
-    text: "Mobiler, abonnemang och hantering av enheter, så att teamet når allt utanför kontoret.", // GISSNING
-    href: "/tjanster#mobilitet",
+    label: "Körjournaler",
+    title: "Körjournal utan pappersarbete.",
+    text: "En elektronisk körjournal sköter rapporteringen åt er, så inget krångel och inga försvunna dokument.",
+    href: "/tjanster#korjournal",
     icon: Car,
   },
   {
     number: "04",
-    label: "Support & förvaltning",
-    title: "En kontakt. Hela vägen.",
-        text: "Fast kontaktperson och löpande förvaltning, så ni slipper förklara allt från början varje gång.",
-
+    label: "Support",
+    title: "En fast kontakt när något strular.",
+    text: "Personlig support och löpande förvaltning. Ni ringer en person som redan känner er lösning.",
     href: "/tjanster#support",
     icon: Headphones,
   },
@@ -62,15 +61,14 @@ const ServicesPreview = () => {
             </div>
 
             <h2 className="m-0 text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] text-[#171C25] sm:text-[50px] md:text-[60px] lg:text-[68px]">
-              En partner.
+              Flera tjänster.
               <br />
-              Flera möjligheter.
+              En kontakt.
             </h2>
           </div>
 
           <p className="m-0 max-w-[520px] text-[16px] leading-7 text-[#667181] md:text-[17px] md:leading-8">
-            Från telefoni till AI, mobilitet och support —
-            samlat runt hur verksamheten faktiskt arbetar.
+              Växel, transkribering, körjournaler och support. Oberoende av operatör.
           </p>
 
         </div>
