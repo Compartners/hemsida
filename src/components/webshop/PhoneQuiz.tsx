@@ -29,9 +29,8 @@ type QuestionKey =
 
 
 type QuizAnswers = Partial<
-  Record<QuestionKey, string>
+  Record<QuestionKey, string | string[]>
 >;
-
 
 const QUESTIONS = [
   {
@@ -721,18 +720,51 @@ export function PhoneQuiz({
     );
 
 
-  const selectAnswer = (
-    value: string
-  ) => {
-    setAnswers(
-      (current) => ({
+  const selectAnswer = (value: string) => {
+  const isMultiSelect =
+    currentQuestion.key === "price" ||
+    currentQuestion.key === "usage";
+
+  setAnswers((current) => {
+    const existing = current[currentQuestion.key];
+
+    if (!isMultiSelect) {
+      return {
         ...current,
-        [
-          currentQuestion.key
-        ]: value,
-      })
-    );
-  };
+        [currentQuestion.key]: value,
+      };
+    }
+
+    const currentValues = Array.isArray(existing)
+      ? existing
+      : existing
+        ? [existing]
+        : [];
+
+    // Klicka på ett redan valt alternativ → ta bort det
+    if (currentValues.includes(value)) {
+      return {
+        ...current,
+        [currentQuestion.key]: currentValues.filter(
+          (item) => item !== value
+        ),
+      };
+    }
+
+    // Max 2 val på price/usage
+    if (currentValues.length >= 2) {
+      return current;
+    }
+
+    return {
+      ...current,
+      [currentQuestion.key]: [
+        ...currentValues,
+        value,
+      ],
+    };
+  });
+};
 
 
   const goNext = () => {
