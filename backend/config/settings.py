@@ -212,7 +212,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 # Avsändare och intern ordermottagare
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
-    "onboarding@resend.dev"
+    "no-reply@compartners.se"
 )
 
 ORDER_NOTIFICATION_EMAIL = os.getenv(
