@@ -183,6 +183,26 @@ function normalize(value: string) {
 }
 
 
+// Fungerar både för enkelval (string) och flerval (string[])
+function has(
+  answer: string | string[] | undefined,
+  value: string
+) {
+  return Array.isArray(answer)
+    ? answer.includes(value)
+    : answer === value;
+}
+
+
+function hasAnswer(
+  answer: string | string[] | undefined
+) {
+  return Array.isArray(answer)
+    ? answer.length > 0
+    : Boolean(answer);
+}
+
+
 function inferSize(
   product: Product
 ): "compact" | "standard" | "large" {
@@ -418,11 +438,11 @@ function buildRecommendations(
 
 
       /* ------------------------------------------------------
-         PRISPROFIL
+         PRISPROFIL (flerval)
       ------------------------------------------------------ */
 
       if (
-        answers.price === "value"
+        has(answers.price, "value")
       ) {
         score +=
           (1 - pricePosition) *
@@ -438,8 +458,7 @@ function buildRecommendations(
       }
 
       if (
-        answers.price ===
-        "balanced"
+        has(answers.price, "balanced")
       ) {
         const distance =
           Math.abs(
@@ -455,8 +474,7 @@ function buildRecommendations(
       }
 
       if (
-        answers.price ===
-        "premium"
+        has(answers.price, "premium")
       ) {
         score +=
           pricePosition *
@@ -493,11 +511,11 @@ function buildRecommendations(
 
 
       /* ------------------------------------------------------
-         ANVÄNDNING
+         ANVÄNDNING (flerval)
       ------------------------------------------------------ */
 
       if (
-        answers.usage === "basic"
+        has(answers.usage, "basic")
       ) {
         score +=
           tier <= 2
@@ -510,8 +528,7 @@ function buildRecommendations(
       }
 
       if (
-        answers.usage ===
-        "balanced"
+        has(answers.usage, "balanced")
       ) {
         score +=
           tier >= 2 &&
@@ -521,7 +538,7 @@ function buildRecommendations(
       }
 
       if (
-        answers.usage === "power"
+        has(answers.usage, "power")
       ) {
         score +=
           tier >= 3
@@ -537,8 +554,7 @@ function buildRecommendations(
       }
 
       if (
-        answers.usage ===
-        "camera"
+        has(answers.usage, "camera")
       ) {
         score +=
           isCameraFocused(
@@ -768,7 +784,7 @@ export function PhoneQuiz({
 
 
   const goNext = () => {
-    if (!currentAnswer) {
+    if (!hasAnswer(currentAnswer)) {
       return;
     }
 
@@ -1140,8 +1156,10 @@ export function PhoneQuiz({
           {currentQuestion.options.map(
             (option) => {
               const active =
-                currentAnswer ===
-                option.value;
+                has(
+                  currentAnswer,
+                  option.value
+                );
 
               return (
                 <button
@@ -1270,7 +1288,7 @@ export function PhoneQuiz({
           <button
             type="button"
             disabled={
-              !currentAnswer
+              !hasAnswer(currentAnswer)
             }
             onClick={goNext}
             className="
