@@ -154,7 +154,7 @@ const Hero = () => {
               lg:text-[96px]
             "
           >
-            Kommunikation som
+            Kommunikation som 
             <br />
 
             <span className="font-semi-bold text-white/90">
