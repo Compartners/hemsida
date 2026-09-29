@@ -1,18 +1,18 @@
 const steps = [
   {
     number: "01",
-    title: "Koppla ihop",
-    text: "Vi skapar en tydlig bild av nuläget, människorna, systemen och behoven.",
+    title: "Kartlägg",
+    text: "Vi går igenom nuläget: människorna, systemen och vad som skaver.",
   },
   {
     number: "02",
     title: "Förenkla",
-    text: "Vi väljer och samlar rätt lösningar i en struktur som är enkel att förstå och använda.",
+    text: "Vi väljer rätt lösningar och samlar dem i en helhet som är enkel att använda.",
   },
   {
     number: "03",
     title: "Förstärk",
-    text: "Vi utvecklar lösningen vidare med data, automation och AI där det skapar verklig nytta.",
+    text: "Vi bygger vidare med automation och AI där det sparar tid eller minskar manuellt arbete.",
   },
 ];
 

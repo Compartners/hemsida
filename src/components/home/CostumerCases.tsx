@@ -2,19 +2,19 @@ import { ArrowUpRight } from "lucide-react";
 
 const cases = [
   {
-    category: "FÖRETAGSTELEFONI",
-    title: "En enklare vardag börjar med rätt lösning.",
-    text: "Här lyfter vi ett riktigt kundcase med fokus på vad som blev enklare för verksamheten.",
+    company: "Varubud Åkeri",
+    person: "Daniel Johansson",
+    text: "Vi är väldigt nöjda med vårt samarbete, snabb återkoppling i våra ärenden och hittar lösningar på våra utmaningar.",
   },
   {
-    category: "SUPPORT",
-    title: "Personlig hjälp när den faktiskt behövs.",
-    text: "Ett framtida case kring snabb återkoppling, personlig kontakt och löpande support.",
+    company: "Apoteksgruppen",
+    person: "Ulrica Storensten",
+    text: "Deras personliga service är en trygghet för hela vår organisation.",
   },
   {
-    category: "SMART TEKNOLOGI",
-    title: "Teknik som frigör tid i vardagen.",
-    text: "Här kan vi visa hur AI, automation eller smartare kommunikation skapar konkret affärsnytta.",
+    company: "Workbox Communication",
+    person: "Tom Wiking",
+    text: "ComPartners har skräddarsytt telefonin efter koncernens behov på ett utmärkt sätt.",
   },
 ];
 
@@ -52,7 +52,7 @@ export default function CustomerCases() {
         <div className="mt-14 grid gap-3 md:mt-16 lg:grid-cols-3">
           {cases.map((item, index) => (
             <article
-              key={item.title}
+              key={item.company}
               className="
                 group
                 relative
@@ -91,16 +91,14 @@ export default function CustomerCases() {
               {/* Content */}
               <div className="mt-auto pt-16">
                 <div className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.13em] text-[#0B72FE]">
-                  {item.category}
-                </div>
+  {item.company}
+</div>
 
-                <h3 className="mb-3 text-[25px] font-semibold leading-[1.1] tracking-[-0.04em] text-[#171C25]">
-                  {item.title}
-                </h3>
+<p className="mb-6 text-[22px] font-semibold leading-[1.2] tracking-[-0.03em] text-[#171C25]">
+  “{item.text}”
+</p>
 
-                <p className="m-0 leading-7 text-[#667181]">
-                  {item.text}
-                </p>
+<p className="m-0 text-sm text-[#667181]">{item.person}</p>
               </div>
 
               {/* Glow */}

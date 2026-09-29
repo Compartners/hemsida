@@ -8,10 +8,10 @@ import teamPhoto from "@/assets/team.jpg";
 
 const PersonalSupport = () => {
   const points = [
-    "Personlig kontakt",
-    "Snabb återkoppling",
-    "Löpande förvaltning",
-  ];
+  "Personlig kontakt",
+  "Svar samma dag", // byt till t.ex. "Svar samma dag" om det är sant
+  "Löpande förvaltning",
+];
 
   return (
     <section className="overflow-hidden bg-[#F4F7FA] py-20 md:py-24 lg:py-32">
@@ -118,9 +118,8 @@ const PersonalSupport = () => {
           </h2>
 
           <p className="mt-6 max-w-[570px] text-[16px] leading-7 text-[#667181] md:text-[17px] md:leading-8">
-            Bra teknik räcker inte om hjälpen försvinner när något
-            händer. Därför ska ni ha en kontakt som känner verksamheten
-            och kan hjälpa er vidare.
+            Bra teknik hjälper inte om supporten försvinner när något går fel.
+            Ni får en kontakt som redan känner er verksamhet.
           </p>
 
 

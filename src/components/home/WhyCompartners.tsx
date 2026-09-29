@@ -11,19 +11,19 @@ const values: Value[] = [
   {
     number: "01",
     title: "Oberoende",
-    text: "Vi utgår från vad som passar er verksamhet, inte från en förutbestämd lösning.",
+    text: "Vi är inte knutna till någon leverantör. Vi rekommenderar det som passar er verksamhet, inte det som passar oss bäst.",
     type: "independent",
   },
   {
     number: "02",
     title: "Personligt",
-    text: "En kontakt som lär känna er verksamhet och finns kvar även efter implementationen.",
+    text: "En fast kontaktperson som lär känna er verksamhet. Ni ringer en person, inte ett supportnummer.",
     type: "personal",
   },
   {
     number: "03",
     title: "Enkelt",
-    text: "Vi samlar fler delar i en tydligare helhet och tar ansvar för att det fungerar i praktiken.",
+    text: "Ett avtal, en faktura, en kontakt. Vi samlar delarna och tar ansvar för att det fungerar i vardagen.",
     type: "simple",
   },
 ];
@@ -244,9 +244,7 @@ const WhyCompartners = () => {
           </div>
 
           <p className="m-0 max-w-[520px] text-[16px] leading-7 text-[#24272b] md:text-[17px] md:leading-8">
-            Teknik ska göra vardagen enklare. Därför börjar vi inte
-            i produkten — vi börjar i er verksamhet, era behov och
-            hur ni faktiskt arbetar.
+            Vi börjar inte i produkten. Vi börjar i er verksamhet: hur ni arbetar, vem som ringer vem och var det skaver idag.
           </p>
         </div>
 
