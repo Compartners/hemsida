@@ -32,6 +32,12 @@ type QuizAnswers = Partial<
   Record<QuestionKey, string | string[]>
 >;
 
+// Frågor där användaren kan välja flera alternativ (max 2)
+const MULTI_SELECT_KEYS: QuestionKey[] = [
+  "usage",
+  "priority",
+];
+
 const QUESTIONS = [
   {
     key: "ecosystem" as const,
@@ -115,7 +121,7 @@ const QUESTIONS = [
     eyebrow: "Arbetsdag",
     title: "Hur använder du telefonen i jobbet?",
     description:
-      "Välj det alternativ som bäst beskriver en vanlig arbetsdag.",
+      "Välj upp till två alternativ som bäst beskriver en vanlig arbetsdag.",
     options: [
       {
         value: "basic",
@@ -144,7 +150,7 @@ const QUESTIONS = [
     eyebrow: "Prioritet",
     title: "Vad väger tyngst i slutändan?",
     description:
-      "Det här svaret får extra vikt när vi rangordnar matchningarna.",
+      "Välj upp till två. Dina val får extra vikt när vi rangordnar matchningarna.",
     options: [
       {
         value: "value",
@@ -438,7 +444,7 @@ function buildRecommendations(
 
 
       /* ------------------------------------------------------
-         PRISPROFIL (flerval)
+         PRISPROFIL
       ------------------------------------------------------ */
 
       if (
@@ -566,12 +572,11 @@ function buildRecommendations(
 
 
       /* ------------------------------------------------------
-         SLUTPRIORITET
+         SLUTPRIORITET (flerval)
       ------------------------------------------------------ */
 
       if (
-        answers.priority ===
-        "value"
+        has(answers.priority, "value")
       ) {
         score +=
           (1 - pricePosition) *
@@ -579,16 +584,14 @@ function buildRecommendations(
       }
 
       if (
-        answers.priority ===
-        "performance"
+        has(answers.priority, "performance")
       ) {
         score +=
           tier * 12;
       }
 
       if (
-        answers.priority ===
-        "camera"
+        has(answers.priority, "camera")
       ) {
         score +=
           isCameraFocused(
@@ -599,8 +602,7 @@ function buildRecommendations(
       }
 
       if (
-        answers.priority ===
-        "future"
+        has(answers.priority, "future")
       ) {
         score +=
           generationBonus(
@@ -738,8 +740,7 @@ export function PhoneQuiz({
 
   const selectAnswer = (value: string) => {
   const isMultiSelect =
-    currentQuestion.key === "price" ||
-    currentQuestion.key === "usage";
+    MULTI_SELECT_KEYS.includes(currentQuestion.key);
 
   setAnswers((current) => {
     const existing = current[currentQuestion.key];
@@ -767,7 +768,7 @@ export function PhoneQuiz({
       };
     }
 
-    // Max 2 val på price/usage
+    // Max 2 val på usage/priority
     if (currentValues.length >= 2) {
       return current;
     }
@@ -1106,6 +1107,9 @@ export function PhoneQuiz({
       QUESTIONS.length) *
     100;
 
+  const isMulti =
+    MULTI_SELECT_KEYS.includes(currentQuestion.key);
+
   return (
     <section
       className="
@@ -1133,6 +1137,12 @@ export function PhoneQuiz({
               Fråga {step + 1} av{" "}
               {QUESTIONS.length} ·{" "}
               {currentQuestion.eyebrow}
+
+              {isMulti && (
+                <span className="ml-2 rounded-full bg-[#0B72FE]/10 px-2 py-0.5 normal-case tracking-normal text-[#0B72FE]">
+                  Välj upp till 2
+                </span>
+              )}
             </div>
 
             <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-[#171C25] sm:text-2xl">
@@ -1227,8 +1237,13 @@ export function PhoneQuiz({
                         w-5
                         shrink-0
                         place-items-center
-                        rounded-full
                         border
+
+                        ${
+                          isMulti
+                            ? "rounded-md"
+                            : "rounded-full"
+                        }
 
                         ${
                           active
