@@ -1,7 +1,7 @@
 const companies = [
   "Tuna Entreprenad",
   "Kronans Apotek",
-  "Kylenkrysset",
+  "Kilenkrysset",
   "Varubud Åkeri",
   "RMS Lagerinredning",
 ];
