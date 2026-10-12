@@ -22,6 +22,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "hemsida-vm1t.vercel.app",
+    "hemsida-vm1t-d769xr0rr-com-partners.vercel.app",
+    "hemsida-swart-six.vercel.app",
 ]
 
 
