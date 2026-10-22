@@ -13,6 +13,7 @@ import FinalCTA from "../components/home/FinalCTA";
 import ContactSection from "../components/contact/ContactSection";
 import { C } from "vitest/dist/chunks/reporters.d.BFLkQcL6.js";
 import Seo from "@/components/SEO";
+import VideoBrightnessTest from "@/components/home/VideoBrightnessTest";
 
 const Index = () => {
   return (
@@ -25,7 +26,6 @@ const Index = () => {
   />
       <main>
         <Hero />
-
         <TrustStrip />
 
         <WhyCompartners />
