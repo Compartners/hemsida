@@ -25,14 +25,6 @@ const Footer = () => {
             >
               <AnimatedLogo className="w-[190px] h-auto" />
             </Link>
-
-            <p className="mt-7 text-[17px] leading-7 text-[#667181]">
-              Nordisk klarhet.
-              <br />
-              Mänsklig trygghet.
-              <br />
-              Smart teknologi.
-            </p>
           </div>
 
           {/* Explore */}
@@ -128,7 +120,7 @@ const Footer = () => {
               to="/#kontakt"
               className="group inline-flex items-center gap-2 border-b border-[#171C25] pb-1 text-sm font-semibold"
             >
-              Prata med oss
+              Prata med en företagsrådgivare
 
               <ArrowUpRight
                 size={17}
@@ -147,7 +139,15 @@ const Footer = () => {
           </span>
 
           <span className="font-mono text-[10px] tracking-[0.06em]">
-            Koppla ihop. Förenkla. Förstärk.
+            Made with ❤️ by{" "}
+            <a
+              href="https://www.compartners.se/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-[#0B72FE] transition hover:text-[#2CCEC2]"
+            >
+              comparters
+            </a>
           </span>
         </div>
       </div>

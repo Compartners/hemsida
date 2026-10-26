@@ -37,7 +37,7 @@ export default function Navbar() {
         transition-all duration-300
         ${
           scrolled
-            ? "border-b border-[#E3E9EF]/80 bg-white/50  shadow-[0_8px_30px_rgba(19,31,49,0.05)] backdrop-blur-xl"
+            ? "border-b border-[#E3E9EF]/80 bg-white/35  shadow-[0_8px_30px_rgba(19,31,49,0.05)] backdrop-blur-xl"
             : "bg-transparent"
         }
       `}
@@ -114,7 +114,7 @@ export default function Navbar() {
           </Link>
 
           <Link
-            to="/webbshop"
+            to="/#varfor"
             className={`
               text-sm font-medium transition
               ${
@@ -124,12 +124,12 @@ export default function Navbar() {
               }
             `}
           >
-            Webbshop
+            Tune in? 
           </Link>
         </nav>
 
         {/* CTA */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:block gap-4">
           <Link
             to="/#kontakt"
             className={`
@@ -145,6 +145,23 @@ export default function Navbar() {
             `}
           >
             Kontakta oss
+          </Link>
+
+          <Link
+            to="/webbshop"
+            className={`
+              inline-flex min-h-[44px] items-center justify-center
+              rounded-full px-5
+              text-sm font-semibold
+              transition-all duration-300
+              ${
+                scrolled
+                  ? "bg-[#171C25] text-white hover:bg-[#2D3444]"
+                  : "border border-white/20 bg-white/[0.08] text-white backdrop-blur-xl hover:bg-white/[0.14]"
+              }
+            `}
+          >
+            Webbshop
           </Link>
         </div>
 

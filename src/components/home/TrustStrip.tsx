@@ -3,7 +3,7 @@ const companies = [
   "Kronans Apotek",
   "Kilenkrysset",
   "Varubud Åkeri",
-  "RMS Lagerinredning",
+  "Leine & Linde",
 ];
 
 const TrustStrip = () => {

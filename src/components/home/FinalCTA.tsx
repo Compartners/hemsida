@@ -10,9 +10,6 @@ export default function FinalCTA() {
       <div className="pointer-events-none absolute bottom-[-330px] left-1/2 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(18,180,240,0.22),transparent_66%)]" />
 
       {/* Tiny signal accents */}
-      <div className="pointer-events-none absolute left-[8%] top-[24%] hidden h-px w-[160px] bg-gradient-to-r from-transparent via-[#12B4F0]/30 to-transparent lg:block" />
-
-      <div className="pointer-events-none absolute bottom-[22%] right-[8%] hidden h-px w-[180px] bg-gradient-to-r from-transparent via-[#2CCEC2]/25 to-transparent lg:block" />
 
       <div className="relative z-10 mx-auto w-full max-w-[1240px] px-5 md:px-8">
         <div className="mx-auto max-w-[900px]">
@@ -66,7 +63,7 @@ export default function FinalCTA() {
               hover:shadow-[0_22px_58px_rgba(11,114,254,0.34)]
             "
           >
-            Prata med Compartners
+            Prata med en företagsrådgivare
 
             <ArrowRight
               size={17}

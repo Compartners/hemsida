@@ -25,7 +25,7 @@ const Index = () => {
     canonical="https://compartners.se/"
   />
       <main>
-        <Hero />
+        <Hero showPreviewControls={false}  />
         <TrustStrip />
 
         <WhyCompartners />

@@ -199,41 +199,7 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
           bg-[linear-gradient(180deg,rgba(3,6,10,0.22)_0%,rgba(3,6,10,0.05)_55%,rgba(3,6,10,0.38)_100%)]
         "
       />
-
-      {/* SUBTLE GRID */}
-      <div
-        className="
-          pointer-events-none
-          absolute inset-0
-          opacity-[0.09]
-          [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)]
-          [background-size:72px_72px]
-          [mask-image:linear-gradient(90deg,black_0%,rgba(0,0,0,0.65)_45%,transparent_82%)]
-        "
-      />
-
-      {/* SIGNAL ROUTES */}
-      <div
-        className="
-          pointer-events-none
-          absolute right-[-140px] top-[31%]
-          hidden h-[160px] w-[520px]
-          rounded-r-full
-          border border-l-0 border-[#12B4F0]/20
-          lg:block
-        "
-      />
-
-      <div
-        className="
-          pointer-events-none
-          absolute right-[-80px] top-[49%]
-          hidden h-[260px] w-[390px]
-          rounded-r-full
-          border border-l-0 border-[#2CCEC2]/15
-          lg:block
-        "
-      />
+      
 
       </>}
 
@@ -242,10 +208,7 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
       <div className="relative z-10 mx-auto w-full max-w-[1240px] px-5 pt-16 md:px-8 lg:pt-20">
         <div className="max-w-[900px]">
           {/* Eyebrow */}
-          <div className="mb-6 flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-white/50">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#2CCEC2] shadow-[0_0_12px_rgba(44,206,194,0.7)]" />
-            Operatörsoberoende företagskommunikation
-          </div>
+
 
           {/* Heading */}
           <h1
@@ -263,7 +226,8 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
             Kommunikation som
             <br />
             <span className="text-white/90">
-              skapar klarhet.
+              skapar 
+               <span className=" bg-gradient-to-r from-[#0B72FE] to-[#2CCEC2] bg-clip-text text-transparent"> klarhet.</span>
             </span>
           </h1>
 
@@ -279,9 +243,9 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
               md:leading-8
             "
           >
-            Telefoni, smarta AI-lösningar och personlig support —
-            samlat hos en partner som utgår från hur er verksamhet
-            faktiskt arbetar.
+            Vi hjälper företag att få telefoni, smart teknik och support
+            att fungera som en sammanhängande del av verksamheten —
+            inte som ännu fler system att hantera.
           </p>
 
           {/* Actions */}
@@ -326,65 +290,18 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
                 hover:bg-white/[0.10]
               "
             >
-              Se våra tjänster
+              Vad kan vi erbjuda?
             </Link>
           </div>
 
           {/* Proof */}
-          <div
-            className="
-              mt-9
-              flex flex-col gap-3
-              text-[13px] text-white/55
-              sm:flex-row sm:flex-wrap sm:gap-7
-            "
-          >
-            <div className="flex items-center gap-2">
-              <Check
-                size={15}
-                strokeWidth={2}
-                className="text-[#2CCEC2]"
-              />
-              Operatörsoberoende
-            </div>
 
-            <div className="flex items-center gap-2">
-              <Check
-                size={15}
-                strokeWidth={2}
-                className="text-[#2CCEC2]"
-              />
-              Personlig kontakt
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Check
-                size={15}
-                strokeWidth={2}
-                className="text-[#2CCEC2]"
-              />
-              Företagsanpassat
-            </div>
-          </div>
+          
         </div>
       </div>
 
       {/* BRAND STATEMENT */}
-      <div
-        className="
-          absolute bottom-8 right-8 z-10
-          hidden items-center gap-3
-          font-mono text-[9px] uppercase
-          tracking-[0.15em] text-white/30
-          xl:flex
-        "
-      >
-        <span>Nordisk minimalism</span>
-        <span className="h-px w-6 bg-white/15" />
-        <span>Mänsklig trygghet</span>
-        <span className="h-px w-6 bg-white/15" />
-        <span>Smart teknologi</span>
-      </div>
+
 
       </>}
 
