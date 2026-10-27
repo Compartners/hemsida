@@ -31,6 +31,7 @@ import Webbshop from "./pages/Webbshop";
 import Careers from "./pages/Careers";
 import NotFound from "./pages/NotFound";
 import JobbaHosOss from "./pages/JobbHosOss";
+import ReleaseGate  from "./pages/ReleaseGate";
 
 /* Global */
 
@@ -134,7 +135,7 @@ function SessionExpiryListener() {
 const App = () => {
   return (
 
-    
+    <ReleaseGate>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
 
@@ -240,6 +241,7 @@ const App = () => {
 
       </TooltipProvider>
     </QueryClientProvider>
+    </ReleaseGate>
   );
 };
 
