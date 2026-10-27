@@ -1,5 +1,4 @@
 import { useEffect, useState, type ReactNode } from "react";
-import AnimatedLogo from "../components/AnimatedLogo"; // Anpassa sökvägen
 
 // Svensk tid: 29 oktober 2026 kl. 08.00.
 const RELEASE_AT = new Date("2026-10-29T08:00:00+01:00").getTime();
@@ -120,10 +119,6 @@ export default function ReleaseGate({
 
           {/* Logotyp */}
           <header className="flex justify-center px-6 pt-10 sm:pt-14">
-            <AnimatedLogo
-              variant="light"
-              className="h-auto w-[180px] sm:w-[210px]"
-            />
           </header>
 
           {/* Lansering */}
