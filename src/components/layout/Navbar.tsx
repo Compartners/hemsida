@@ -89,13 +89,13 @@ export default function Navbar() {
 
         {/* En tydlig huvudknapp */}
         <div className="hidden items-center gap-6 lg:flex">
-          <Link
+         {/* <Link
             to="/webbshop"
             className={`${linkClass} inline-flex items-center gap-1`}
           >
             Webbshop
             <ArrowUpRight size={14} aria-hidden="true" />
-          </Link>
+          </Link> */}
 
           <Link
             to="/#kontakt"

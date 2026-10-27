@@ -62,12 +62,12 @@ const Footer = () => {
                 Jobba hos oss
               </Link>
 
-              <Link
+              {/* <Link
                 to="/webbshop"
                 className="transition hover:translate-x-1 hover:text-[#171C25]"
               >
                 Webbshop
-              </Link>
+              </Link> */}
             </nav>
           </div>
 
