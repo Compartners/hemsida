@@ -6,7 +6,6 @@ import AboutHero from "../components/about/AboutHero";
 import AboutStory from "../components/about/AboutStory";
 import AboutValues from "../components/about/AboutValues";
 import AboutTeam from "../components/about/AboutTeam";
-import CareerApplication from "../components/about/CareerApplication";
 
 export default function About() {
   return (
@@ -24,10 +23,6 @@ export default function About() {
         <AboutStory />
         <AboutValues />
         <AboutTeam />
-
-        <section id="karriar">
-          <CareerApplication />
-        </section>
       </main>
 
       <Footer />

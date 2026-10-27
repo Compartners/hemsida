@@ -128,6 +128,22 @@ const Footer = () => {
                 className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
               />
             </Link>
+            <div
+              className="group inline-flex items-center mt-6 gap-2 border-b border-[#171C25] pb-1 text-sm font-semibold"
+            >
+              <a
+               href="https://lynes.io/appar"
+              target="_blank"
+              rel="noopener noreferrer"
+              >
+              Ladda ner växelplattform
+</a>
+              <ArrowUpRight
+                size={17}
+                strokeWidth={1.7}
+                className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+              />
+            </div>
           </div>
 
         </div>
@@ -146,7 +162,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="font-semibold text-[#0B72FE] transition hover:text-[#2CCEC2]"
             >
-              comparters
+              compartners
             </a>
           </span>
         </div>

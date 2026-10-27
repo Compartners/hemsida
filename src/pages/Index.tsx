@@ -26,7 +26,6 @@ const Index = () => {
   />
       <main>
         <Hero showPreviewControls={false}  />
-        <TrustStrip />
 
         <WhyCompartners />
 
@@ -36,12 +35,11 @@ const Index = () => {
 
         <AiFeature />
 
-        <CustomerCases />
 
         <PersonalSupport />
+
         <ContactSection />
 
-        <FinalCTA />
       </main>
 
       <Footer />

@@ -35,9 +35,9 @@ export default function AboutHero() {
               className="
                 group inline-flex min-h-[52px] items-center justify-center gap-2
                 rounded-full
-                bg-gradient-to-r from-[#0B72FE] via-[#12B4F0] to-[#2CCEC2]
+                bg-white
                 px-6
-                text-sm font-semibold text-white
+                text-sm font-semibold text-black
                 shadow-[0_18px_46px_rgba(11,114,254,0.24)]
                 transition-all duration-300
                 hover:-translate-y-0.5

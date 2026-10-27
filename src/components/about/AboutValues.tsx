@@ -18,16 +18,12 @@ const values = [
 
 export default function AboutValues() {
   return (
-    <section className="relative overflow-hidden bg-[#F4F7FA] py-20 md:py-24 lg:py-32">
+    <section className="relative overflow-hidden bg-white">
+                  <div className="inset-0 m-5 min-h-max bg-[#F4F7FA] p-8 rounded-lg -z-10 md:py-24 lg:py-32" >
+
       <div className="mx-auto w-full max-w-[1240px] px-5 md:px-8">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-24">
           <div>
-            <div className="mb-5 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.16em] text-[#7D8794]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#0B72FE]" />
-
-              Vårt sätt att tänka
-            </div>
-
             <h2 className="text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] text-[#171C25] sm:text-[52px] md:text-[64px]">
               En enkel princip
               <br />
@@ -84,6 +80,7 @@ export default function AboutValues() {
             </article>
           ))}
         </div>
+      </div>
       </div>
     </section>
   );

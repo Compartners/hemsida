@@ -2,16 +2,13 @@ export default function AboutStory() {
   return (
     <section
       id="var-historia"
-      className="bg-white py-20 md:py-24 lg:py-32"
+      className="bg-white"
     >
+                  <div className="inset-0 m-5 min-h-max bg-gray-100/50 p-8 rounded-lg -z-10 md:py-24 lg:py-32" >
+
       <div className="mx-auto grid w-full max-w-[1240px] gap-14 px-5 md:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
         {/* Left */}
         <div>
-          <div className="mb-5 flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[#7D8794]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#0B72FE]" />
-
-            Vilka vi är
-          </div>
 
           <p className="max-w-[340px] text-[15px] leading-7 text-[#7D8794]">
             Oberoende rådgivning, personlig relation och teknik som ska
@@ -40,6 +37,7 @@ export default function AboutStory() {
             </p>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );

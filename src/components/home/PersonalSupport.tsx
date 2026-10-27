@@ -14,7 +14,9 @@ const PersonalSupport = () => {
 ];
 
   return (
-    <section className="overflow-hidden bg-[#F4F7FA] py-20 md:py-24 lg:py-32">
+    <section className="overflow-hidden bg-white">
+      <div className="inset-0 m-5 min-h-max bg-gray-100/50 p-8 rounded-lg -z-10 md:py-24 lg:py-32" >
+
       <div className="mx-auto grid w-full max-w-[1240px] gap-14 px-5 md:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-24">
 
         {/* Visual */}
@@ -105,9 +107,6 @@ const PersonalSupport = () => {
         <div className="max-w-[620px]">
 
           <div className="mb-5 flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[#7D8794]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#0B72FE]" />
-
-            Mänsklig trygghet
           </div>
 
           <h2 className="m-0 text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] text-[#171C25] sm:text-[50px] md:text-[60px] lg:text-[68px]">
@@ -184,6 +183,7 @@ const PersonalSupport = () => {
 
         </div>
 
+      </div>
       </div>
     </section>
   );

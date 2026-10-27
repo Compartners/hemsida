@@ -104,6 +104,8 @@ export default function AnimatedLogo({
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 715.55 121.12"
       className={className}
+        style={{ overflow: 'visible' }}
+
       onMouseEnter={replay}
       role="img"
       aria-label="Compartners"

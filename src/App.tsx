@@ -30,6 +30,7 @@ import Tjanster from "./pages/Tjanster";
 import Webbshop from "./pages/Webbshop";
 import Careers from "./pages/Careers";
 import NotFound from "./pages/NotFound";
+import JobbaHosOss from "./pages/JobbHosOss";
 
 /* Global */
 
@@ -132,6 +133,8 @@ function SessionExpiryListener() {
 
 const App = () => {
   return (
+
+    
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
 
@@ -162,6 +165,11 @@ const App = () => {
               element={<Careers />}
             />
 
+            <Route
+              path="/jobba-hos-oss"
+              element={<JobbaHosOss />}
+            />
+
 
             {/* Webbshop / customer area */}
             <Route
@@ -185,6 +193,8 @@ const App = () => {
                 />
               }
             />
+
+            <Route path="jobba-hos-oss" element={<Navigate to="/jobba-hos-oss" replace />} />
 
             <Route
               path="/korjournaler"

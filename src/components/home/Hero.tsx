@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import fogVideo from "@/assets/fog_video.mp4";
 import fogBild from "@/assets/fog_bild.png";
@@ -52,6 +52,90 @@ const THEMES = {
 const THEME_IDS: ThemeId[] = ["fog", "fall", "winter", "spring", "summer"];
 const STORAGE_KEY = "compartners.hero.brightness.v1";
 
+// Animationsinställningar – justera här om du vill ha det långsammare/snabbare.
+const FADE_DURATION_MS = 1600;          // opacity på text och knappar
+const SLIDE_DURATION_MS = 1600;         // upp-glidningen
+const OPACITY_EASING = "cubic-bezier(0.4, 0, 0.2, 1)";   // mjuk in och ut
+const SLIDE_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";   // snabb start, mjuk landning
+
+// Ändra orden och tempot här.
+const HERO_WORDS = ["klarhet.", "trygghet.", "relationer.", "resultat."] as const;
+const TYPE_SPEED_MS = 105;
+const DELETE_SPEED_MS = 55;
+const WORD_PAUSE_MS = 2300;
+const NEXT_WORD_PAUSE_MS = 350;
+
+function TypewriterWord({ active }: { active: boolean }) {
+  const [text, setText] = useState("");
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: number | undefined;
+    let wordIndex = 0;
+    let characterCount = 0;
+    let deleting = false;
+
+    const tick = () => {
+      const word = HERO_WORDS[wordIndex];
+      characterCount += deleting ? -1 : 1;
+      setText(word.slice(0, characterCount));
+
+      if (!deleting && characterCount === word.length) {
+        deleting = true;
+        timer = window.setTimeout(tick, WORD_PAUSE_MS);
+      } else if (deleting && characterCount === 0) {
+        deleting = false;
+        wordIndex = (wordIndex + 1) % HERO_WORDS.length;
+        timer = window.setTimeout(tick, NEXT_WORD_PAUSE_MS);
+      } else {
+        timer = window.setTimeout(tick, deleting ? DELETE_SPEED_MS : TYPE_SPEED_MS);
+      }
+    };
+
+    const start = () => {
+      window.clearTimeout(timer);
+      if (preference.matches) {
+        setText(HERO_WORDS[0]);
+        return;
+      }
+      wordIndex = 0;
+      characterCount = 0;
+      deleting = false;
+      setText("");
+      if (active) {
+        // Låt rubrikens befintliga entré landa innan första ordet skrivs.
+        timer = window.setTimeout(tick, FADE_DURATION_MS);
+      }
+    };
+
+    start();
+    preference.addEventListener("change", start);
+    return () => {
+      window.clearTimeout(timer);
+      preference.removeEventListener("change", start);
+    };
+  }, [active]);
+
+  return (
+    <span className="relative inline-grid align-baseline">
+      {/* Alla ord mäts i samma gridcell: stabil bredd även med proportionellt typsnitt. */}
+      {HERO_WORDS.map((word) => (
+        <span key={word} aria-hidden="true" className="invisible col-start-1 row-start-1 whitespace-nowrap pr-[5px]">
+          {word}
+        </span>
+      ))}
+      {/* Skärmläsare får en komplett mening utan bokstavsvisa uppdateringar. */}
+      <span className="sr-only">klarhet, trygghet, relationer och resultat.</span>
+      <span aria-hidden="true" className="col-start-1 row-start-1 whitespace-nowrap">
+        <span className="bg-gradient-to-r from-[#0B72FE] to-[#2CCEC2] bg-clip-text text-transparent">
+          {text}
+        </span>
+        <span className="ml-[3px] inline-block h-[0.72em] w-px bg-white/45 align-baseline motion-reduce:hidden" />
+      </span>
+    </span>
+  );
+}
+
 function getTheme(date: Date): ThemeId {
   const today = `${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   for (const id of ["fall", "winter", "spring", "summer"] as const) {
@@ -97,10 +181,27 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
   const [showContent, setShowContent] = useState(true);
   const [copyStatus, setCopyStatus] = useState("");
   const [playback, setPlayback] = useState<{ source: string; status: "ready" | "error" } | null>(null);
+  const [entered, setEntered] = useState(false);
+  const [reduceMotion] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 60_000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  // Startar fade-up efter att starttillståndet faktiskt målats (två frames),
+  // så övergången alltid körs även när bild/video laddar och tråden är upptagen.
+  useEffect(() => {
+    let raf2 = 0;
+    const raf1 = window.requestAnimationFrame(() => {
+      raf2 = window.requestAnimationFrame(() => setEntered(true));
+    });
+    return () => {
+      window.cancelAnimationFrame(raf1);
+      window.cancelAnimationFrame(raf2);
+    };
   }, []);
 
   useEffect(() => {
@@ -121,6 +222,18 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
   const overlaysVisible = !showPreviewControls || showOverlays;
   const contentVisible = !showPreviewControls || showContent;
   const filterFor = (mode: MediaMode) => `brightness(${levels[mode]}) saturate(0.9) contrast(0.95)`;
+
+  // Fade up: opacity och transform har egna kurvor, så fade:n känns mjuk
+  // medan upp-glidningen fortfarande landar snyggt. Av vid "reduce motion".
+  const fadeUp = (delayMs: number) => ({
+    className: entered || reduceMotion ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0",
+    style: reduceMotion
+      ? undefined
+      : {
+          transition: `opacity ${FADE_DURATION_MS}ms ${OPACITY_EASING} ${delayMs}ms, transform ${SLIDE_DURATION_MS}ms ${SLIDE_EASING} ${delayMs}ms`,
+          willChange: "opacity, transform",
+        },
+  });
 
   function setLevel(mode: MediaMode, value: number) {
     setBrightness(previous => ({ ...previous, [themeId]: { ...previous[themeId], [mode]: value } }));
@@ -156,14 +269,15 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
           }}
         />
 
-        {/* Videon tonar in när den börjar spela */}
+        {/* Videon tonar in mjukt när den börjar spela (även i dev) */}
         {useVideo && <video
           key={theme.video}
           className={`
             absolute inset-0 h-full w-full
             object-cover object-center
             saturate-[0.9] contrast-[0.95]
-            ${showPreviewControls ? "" : "transition-opacity duration-1000"}
+            transition-opacity duration-[2000ms] ease-in-out
+            motion-reduce:transition-none
             ${videoReady ? "opacity-100" : "opacity-0"}
           `}
           style={{
@@ -212,7 +326,7 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
 
           {/* Heading */}
           <h1
-            className="
+            className={`
               max-w-[950px]
               text-[52px]
               
@@ -221,19 +335,21 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
               sm:text-[44px]
               md:text-[66px]
               lg:text-[82px]
-            "
+              ${fadeUp(0).className}
+            `}
+            style={fadeUp(0).style}
           >
             Kommunikation som
             <br />
             <span className="text-white/90">
-              skapar 
-               <span className=" bg-gradient-to-r from-[#0B72FE] to-[#2CCEC2] bg-clip-text text-transparent"> klarhet.</span>
+              skapar{" "}
+              <TypewriterWord active={entered && contentVisible} />
             </span>
           </h1>
 
           {/* Description */}
           <p
-            className="
+            className={`
               mt-7
               max-w-[670px]
               text-[16px]
@@ -241,15 +357,20 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
               text-white/80
               md:text-[18px]
               md:leading-8
-            "
+              ${fadeUp(200).className}
+            `}
+            style={fadeUp(200).style}
           >
             Vi hjälper företag att få telefoni, smart teknik och support
             att fungera som en sammanhängande del av verksamheten —
             inte som ännu fler system att hantera.
           </p>
 
-          {/* Actions */}
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          {/* Actions – wrappern sköter fade up, knapparna behåller sin hover */}
+          <div
+            className={`mt-8 flex flex-col gap-3 sm:flex-row ${fadeUp(400).className}`}
+            style={fadeUp(400).style}
+          >
             <a
               href="#kontakt"
               className="
@@ -257,10 +378,9 @@ const Hero = ({ showPreviewControls = import.meta.env.DEV }: HeroProps) => {
                 inline-flex min-h-[52px]
                 items-center justify-center gap-2.5
                 rounded-full
-                bg-gradient-to-r
-                from-[#0B72FE] via-[#12B4F0] to-[#2CCEC2]
+                bg-white
                 px-6
-                text-sm font-semibold text-white
+                text-sm font-semibold text-black
                 shadow-[0_18px_46px_rgba(11,114,254,0.24)]
                 transition-all duration-300
                 hover:-translate-y-0.5

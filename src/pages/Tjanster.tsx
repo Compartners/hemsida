@@ -85,9 +85,9 @@ export default function Tjanster() {
           className="
             group inline-flex min-h-[52px] items-center justify-center gap-2
             rounded-full
-            bg-gradient-to-r from-[#0B72FE] via-[#12B4F0] to-[#2CCEC2]
+            bg-white
             px-6
-            text-sm font-semibold text-white
+            text-sm font-semibold text-black
             shadow-[0_18px_46px_rgba(11,114,254,0.24)]
             transition-all duration-300
             hover:-translate-y-0.5
@@ -201,16 +201,15 @@ export default function Tjanster() {
         ===================================================== */}
         <section
           id="telefoni"
-          className="scroll-mt-20 bg-white py-20 md:py-24 lg:py-32"
+          className="scroll-mt-20 bg-white"
         >
+                <div className="inset-0 m-5 min-h-max bg-gray-100/50 p-8 rounded-lg -z-10 md:py-24 lg:py-32" >
+
           <div className="mx-auto grid w-full max-w-[1240px] gap-14 px-5 md:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-24">
             {/* Copy */}
             <div>
               <div className="mb-5 flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[#7D8794]">
-                <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-[#0B72FE]/10 text-[#0B72FE]">
-                  <Phone size={15} strokeWidth={1.8} />
-                </span>
-                01 / Växel & telefoni
+                
               </div>
 
               <h2 className="text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] text-[#171C25] sm:text-[50px] md:text-[60px] lg:text-[68px]">
@@ -247,6 +246,7 @@ export default function Tjanster() {
 
             <ServiceIllustration kind="telefoni" />
           </div>
+          </div>
         </section>
 
         {/* =====================================================
@@ -254,18 +254,16 @@ export default function Tjanster() {
         ===================================================== */}
         <section
           id="transkribering"
-          className="scroll-mt-20 bg-[#111724] py-20 text-white md:py-24 lg:py-32"
+          className="scroll-mt-20 bg-white text-white"
         >
+          <div className="inset-0 m-5 min-h-max bg-[#111724] p-8 rounded-lg -z-10 md:py-24 lg:py-32" >
           <div className="mx-auto grid w-full max-w-[1240px] gap-14 px-5 md:px-8 lg:grid-cols-2 lg:items-center lg:gap-24">
             <ServiceIllustration kind="transkribering" dark />
 
             {/* Copy */}
             <div>
               <div className="mb-5 flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-white/40">
-                <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-[#2CCEC2]/10 text-[#2CCEC2]">
-                  <FileText size={15} strokeWidth={1.8} />
-                </span>
-                02 / Transkribering
+               
               </div>
 
               <h2 className="text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] sm:text-[50px] md:text-[60px] lg:text-[68px]">
@@ -300,6 +298,7 @@ export default function Tjanster() {
               </div>
             </div>
           </div>
+          </div>
         </section>
 
         {/* =====================================================
@@ -307,17 +306,15 @@ export default function Tjanster() {
         ===================================================== */}
         <section
           id="korjournal"
-          className="scroll-mt-20 bg-[#F4F7FA] py-20 md:py-24 lg:py-32"
+          className="scroll-mt-20 bg-white"
         >
+                    <div className="inset-0 m-5 min-h-max bg-gray-100/50 p-8 rounded-lg -z-10 md:py-24 lg:py-32" >
+
           <div className="mx-auto grid w-full max-w-[1240px] gap-14 px-5 md:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-24">
             {/* Copy */}
             <div>
               <div className="mb-5 flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[#7D8794]">
-                <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-[#0B72FE]/10 text-[#0B72FE]">
-                  <Car size={15} strokeWidth={1.8} />
-                </span>
-
-                03 / Körjournaler
+               
               </div>
 
               <h2 className="text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] text-[#171C25] sm:text-[50px] md:text-[60px] lg:text-[68px]">
@@ -353,6 +350,7 @@ export default function Tjanster() {
 
             <ServiceIllustration kind="korjournal" />
           </div>
+          </div>
         </section>
 
         {/* =====================================================
@@ -360,18 +358,17 @@ export default function Tjanster() {
         ===================================================== */}
         <section
           id="support"
-          className="scroll-mt-20 bg-white py-20 md:py-24 lg:py-32"
+          className="scroll-mt-20 bg-white"
         >
+                              <div className="inset-0 m-5 min-h-max bg-gray-100/50 p-8 rounded-lg -z-10 md:py-24 lg:py-32" >
+
           <div className="mx-auto grid w-full max-w-[1240px] gap-14 px-5 md:px-8 lg:grid-cols-2 lg:items-center lg:gap-24">
             <ServiceIllustration kind="support" dark />
 
             {/* Copy */}
             <div>
               <div className="mb-5 flex items-center gap-3 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[#7D8794]">
-                <span className="grid h-8 w-8 place-items-center rounded-[10px] bg-[#2CCEC2]/10 text-[#159F95]">
-                  <Headphones size={15} strokeWidth={1.8} />
-                </span>
-                04 / Support
+               
               </div>
 
               <h2 className="text-[42px] font-semibold leading-[0.98] tracking-[-0.055em] text-[#171C25] sm:text-[50px] md:text-[60px] lg:text-[68px]">
@@ -406,6 +403,7 @@ export default function Tjanster() {
                 ))}
               </div>
             </div>
+          </div>
           </div>
         </section>
 
