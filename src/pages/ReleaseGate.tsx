@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
-// Svensk tid: 29 oktober 2026 kl. 08.00.
-const RELEASE_AT = new Date("2026-10-29T08:00:00+01:00").getTime();
+// Svensk tid: 30 oktober 2026 kl. 08.00.
+const RELEASE_AT = new Date("2026-10-30T09:24:00+01:00").getTime();
 
 function getTimeLeft() {
   return Math.max(0, Math.ceil((RELEASE_AT - Date.now()) / 1000));
@@ -40,7 +40,7 @@ export default function ReleaseGate({
       return;
     }
 
-    const update = () => setSecondsLeft(getTimeLeft);
+    const update = () => setSecondsLeft(getTimeLeft());
 
     const interval = window.setInterval(update, 1000);
 
@@ -163,7 +163,7 @@ export default function ReleaseGate({
               viewBox="0 0 400 40"
               fill="none"
               aria-hidden="true"
-              className="mt-10 h-10 w-full max-w-[360px] sm:mt-12"
+              className="mt-10 h-10 w-full max-w-[360px] overflow-visible sm:mt-12"
             >
               <path
                 d="M20 20H380"
@@ -189,34 +189,40 @@ export default function ReleaseGate({
                 strokeOpacity=".6"
               />
 
-              <g className="release-signal" opacity="0">
+              <g className="release-signal">
                 <animateMotion
                   path="M20 20H380"
                   dur="5s"
                   repeatCount="indefinite"
                 />
 
-                <animate
-                  attributeName="opacity"
-                  values="0;1;1;0"
-                  keyTimes="0;0.1;0.85;1"
-                  dur="5s"
-                  repeatCount="indefinite"
-                />
-
-                <circle r="9" opacity=".12">
+                <circle r="9" opacity="0">
                   <animate
                     attributeName="fill"
                     values="#1694FC;#61CFAE"
                     dur="5s"
                     repeatCount="indefinite"
                   />
+                  <animate
+                    attributeName="opacity"
+                    values="0;.12;.12;0"
+                    keyTimes="0;0.1;0.85;1"
+                    dur="5s"
+                    repeatCount="indefinite"
+                  />
                 </circle>
 
-                <circle r="3">
+                <circle r="3" opacity="0">
                   <animate
                     attributeName="fill"
                     values="#1694FC;#61CFAE"
+                    dur="5s"
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0;1;1;0"
+                    keyTimes="0;0.1;0.85;1"
                     dur="5s"
                     repeatCount="indefinite"
                   />
