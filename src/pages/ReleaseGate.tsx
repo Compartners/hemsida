@@ -127,7 +127,7 @@ export default function ReleaseGate({
               <span className="size-1.5 rounded-full bg-[#3BBBA0]" />
 
               <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-white/60">
-                Premiär 30 oktober · 09.24
+                Premiär 30 oktober · kl.09:24
               </span>
             </div>
 
