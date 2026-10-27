@@ -1253,6 +1253,13 @@
   backdrop-filter: blur(14px);
 }
 
+@media (max-width: 600px) {
+  .personal-support__badge {
+    right: 14px;
+    max-width: calc(100% - 28px);
+  }
+}
+
 .personal-support__badge svg {
   color: var(--color-signal-blue);
 }

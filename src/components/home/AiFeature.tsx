@@ -9,7 +9,7 @@ const features = [
 export default function AiFeature() {
   return (
     <section className="relative overflow-hidden bg-white text-white">
-            <div className="inset-0 m-5 min-h-max bg-[#111724] p-8 rounded-lg -z-10 md:py-24 lg:py-32" >
+      <div className="inset-0 m-5 min-h-max bg-[#111724] p-4 rounded-lg -z-10 md:py-24 lg:py-32" >
 
       {/* Ambient background */}
       <div className="pointer-events-none absolute left-[-180px] top-[-120px] h-[520px] w-[520px] rounded-full bg-[#0B72FE]/10 blur-[140px]" />
@@ -21,16 +21,15 @@ export default function AiFeature() {
         {/* Title */}
         <h2
           className="
-            m-0
-
-            text-[42px]
+            m-0 
+            text-[39px]
             font-semibold
             leading-[0.98]
             tracking-[-0.055em]
 
             text-white
 
-            sm:text-[50px]
+            sm:text-[45px]
             md:text-[60px]
             lg:text-[68px]
           "

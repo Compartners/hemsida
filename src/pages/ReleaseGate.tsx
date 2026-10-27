@@ -130,22 +130,18 @@ export default function ReleaseGate({
                 Premiär 30 oktober · kl.09:24
               </span>
             </div>
-
             <h1 className="m-0 text-[clamp(44px,7.5vw,86px)] font-semibold leading-[1.02] tracking-[-0.06em]">
               Snart kopplar vi på
               <br />
-
               <span className="bg-gradient-to-r from-[#1694FC] via-[#12B4F0] to-[#61CFAE] bg-clip-text text-transparent">
                 något nytt.
               </span>
             </h1>
-
             <p className="mb-0 mt-6 max-w-[430px] text-[15px] leading-7 text-white/50 sm:text-base">
               Vi förbereder vår nya hemsida.
               <br />
               Välkommen tillbaka när vi kopplar på.
             </p>
-
             {/* Nedräkning */}
             <div
               role="timer"
@@ -157,7 +153,6 @@ export default function ReleaseGate({
               <CountdownUnit value={minutes} label="Minuter" />
               <CountdownUnit value={seconds} label="Sekunder" />
             </div>
-
             {/* Signal som kopplar ihop två punkter */}
             <svg
               viewBox="0 0 400 40"
@@ -170,7 +165,6 @@ export default function ReleaseGate({
                 stroke="white"
                 strokeOpacity=".1"
               />
-
               <circle
                 cx="20"
                 cy="20"
@@ -179,7 +173,6 @@ export default function ReleaseGate({
                 stroke="#1694FC"
                 strokeOpacity=".6"
               />
-
               <circle
                 cx="380"
                 cy="20"
@@ -188,14 +181,12 @@ export default function ReleaseGate({
                 stroke="#61CFAE"
                 strokeOpacity=".6"
               />
-
               <g className="release-signal">
                 <animateMotion
                   path="M20 20H380"
                   dur="5s"
                   repeatCount="indefinite"
                 />
-
                 <circle r="9" opacity="0">
                   <animate
                     attributeName="fill"

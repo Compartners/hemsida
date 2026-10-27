@@ -153,7 +153,7 @@ export default function ServicesPreview() {
       id="tjanster"
       aria-labelledby="services-preview-title"
 className="bg-white text-[#171C25]"    >
-      <div className="inset-0 m-5 min-h-max bg-gray-100/50 p-8 rounded-lg -z-10" >
+      <div className="relative isolate m-5 min-h-max overflow-x-clip rounded-lg bg-gray-100/50 p-8">
 
       <div
         aria-hidden="true"

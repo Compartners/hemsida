@@ -153,19 +153,19 @@ export default function Navbar() {
             </Link>
           ))}
 
-          <Link
+          {/*<Link
             to="/webbshop"
             onClick={() => setMobileOpen(false)}
             className="inline-flex items-center gap-1.5 py-5 text-sm font-medium text-[#625F6B]"
           >
             Webbshop
             <ArrowUpRight size={15} aria-hidden="true" />
-          </Link>
+          </Link> */}
 
           <Link
             to="/#kontakt"
             onClick={() => setMobileOpen(false)}
-            className="flex min-h-[48px] items-center justify-center rounded-full bg-[#171C25] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#2D3444]"
+            className="flex min-h-[48px] items-center gap-1.5 py-5 justify-center rounded-full bg-[#171C25] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#2D3444]"
           >
             Kontakta oss
           </Link>
