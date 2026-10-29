@@ -137,53 +137,39 @@ const App = () => {
 <ReleaseGate>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-
         <Toaster />
         <Sonner />
-
         <BrowserRouter>
-
           <ScrollManager />
-
           <SessionExpiryListener />
-
           <Routes>
-
             {/* Main site */}
             <Route
               path="/"
               element={<Index />}
             />
-
             <Route
               path="/tjanster"
               element={<Tjanster />}
             />
-
             <Route
               path="/om-oss"
               element={<Careers />}
             />
-
             <Route
               path="/jobba-hos-oss"
               element={<JobbaHosOss />}
             />
-
-
             {/* Webbshop / customer area */}
             <Route
               path="/webbshop"
               element={<Webbshop />}
             />
-
-
             {/* =========================================
                 LEGACY URLS
 
                 Behåll gamla länkar fungerande.
                 ========================================= */}
-
             <Route
               path="/mobila-vaxlar"
               element={
@@ -193,9 +179,7 @@ const App = () => {
                 />
               }
             />
-
             <Route path="jobba-hos-oss" element={<Navigate to="/jobba-hos-oss" replace />} />
-
             <Route
               path="/korjournaler"
               element={
@@ -205,7 +189,6 @@ const App = () => {
                 />
               }
             />
-
             <Route
               path="/support"
               element={
@@ -215,7 +198,6 @@ const App = () => {
                 />
               }
             />
-
             <Route
               path="/ai"
               element={
@@ -225,19 +207,13 @@ const App = () => {
                 />
               }
             />
-
-
             {/* Catch-all */}
             <Route
               path="*"
               element={<NotFound />}
             />
-
           </Routes>
-
-
         </BrowserRouter>
-
       </TooltipProvider>
     </QueryClientProvider>
 </ReleaseGate>
