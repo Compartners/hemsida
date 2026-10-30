@@ -3,58 +3,54 @@
   <head>
     <meta charset="UTF-8" />
 
-    
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XN2K55FT9R"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-XN2K55FT9R');
-    </script>
-
-
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
 
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-XN2K55FT9R"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      gtag("js", new Date());
+      gtag("config", "G-XN2K55FT9R");
+    </script>
+
+    <!-- =====================================================
+         WEBBPLATSIKON
+    ====================================================== -->
+
     <link rel="icon" type="image/svg+xml" href="/logo1.svg" />
-<link rel="icon" href="/favicon.ico" sizes="48x48" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <!-- =====================================================
          PRIMARY SEO
     ====================================================== -->
 
-    <title>
-      Compartners – Telefoni, AI och företagskommunikation
-    </title>
+    <title>Compartners – Telefoni, AI och företagskommunikation</title>
 
     <meta
       name="description"
       content="Compartners hjälper företag med företagstelefoni, AI, mobilitet och personlig support – samlat hos en operatörsoberoende partner."
     />
 
-    <meta
-      name="author"
-      content="Compartners"
-    />
+    <meta name="author" content="Compartners" />
 
     <meta
       name="robots"
       content="index, follow, max-image-preview:large"
     />
 
-    <link
-      rel="canonical"
-      href="https://compartners.se/"
-    />
+    <link rel="canonical" href="https://www.compartners.se/" />
 
-    <meta
-      name="theme-color"
-      content="#111724"
-    />
+    <meta name="theme-color" content="#111724" />
 
     <!-- =====================================================
          OPEN GRAPH
@@ -70,38 +66,24 @@
       content="Telefoni, smarta AI-lösningar, mobilitet och personlig support – samlat hos en partner som utgår från hur er verksamhet faktiskt arbetar."
     />
 
-    <meta
-      property="og:type"
-      content="website"
-    />
-
-    <meta
-      property="og:locale"
-      content="sv_SE"
-    />
-
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Compartners" />
-
-    <meta
-      property="og:site_name"
-      content="Compartners"
-    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="sv_SE" />
+    <meta property="og:site_name" content="Compartners" />
+    <meta property="og:url" content="https://www.compartners.se/" />
 
     <meta
       property="og:image"
-      content="https://compartners.se/og-image.jpg"
+      content="https://www.compartners.se/compartnersLogoFredag.png"
     />
+
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="Compartners" />
 
     <!-- =====================================================
          TWITTER / X
     ====================================================== -->
 
-    <meta
-      name="twitter:card"
-      content="summary_large_image"
-    />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <meta
       name="twitter:title"
@@ -115,8 +97,10 @@
 
     <meta
       name="twitter:image"
-      content="https://compartners.se/og-image.jpg"
+      content="https://www.compartners.se/compartnersLogoFredag.png"
     />
+
+    <meta name="twitter:image:alt" content="Compartners" />
 
     <!-- =====================================================
          STRUCTURED DATA
@@ -126,21 +110,16 @@
       {
         "@context": "https://schema.org",
         "@type": "Organization",
-        "@id": "https://compartners.se/#organization",
-
+        "@id": "https://www.compartners.se/#organization",
         "name": "Compartners",
-        "url": "https://compartners.se/",
-
+        "url": "https://www.compartners.se/",
         "telephone": "+46-10-210-27-00",
         "email": "info@compartners.se",
-
         "description": "Compartners hjälper företag med företagstelefoni, AI, mobilitet och personlig support. Lösningarna anpassas efter verksamhetens behov och Compartners arbetar operatörsoberoende.",
-
         "areaServed": {
           "@type": "Country",
           "name": "Sweden"
         },
-
         "contactPoint": {
           "@type": "ContactPoint",
           "telephone": "+46-10-210-27-00",
@@ -151,7 +130,6 @@
             "Swedish"
           ]
         },
-
         "knowsAbout": [
           "Företagstelefoni",
           "Telefonilösningar",
@@ -160,11 +138,9 @@
           "Företagskommunikation",
           "Support och förvaltning"
         ],
-
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
           "name": "Compartners tjänster",
-
           "itemListElement": [
             {
               "@type": "OfferCatalog",
@@ -195,10 +171,7 @@
   <body>
     <div id="root"></div>
 
-    <script
-      type="module"
-      src="/src/main.tsx"
-    ></script>
+    <script type="module" src="/src/main.tsx"></script>
 
     <!-- Lynes contact widget -->
     <script type="text/javascript">

@@ -134,7 +134,7 @@ function SessionExpiryListener() {
 
 const App = () => {
   return (
-<ReleaseGate>
+    <ReleaseGate>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
@@ -216,7 +216,7 @@ const App = () => {
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
-</ReleaseGate>
+    </ReleaseGate>
   );
 };
 

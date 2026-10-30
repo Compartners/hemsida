@@ -1,6 +1,6 @@
 import { Mail, Phone } from "lucide-react";
 
-import hovdingen from "../../assets/hovdingen.png";
+import hovdingen from "../../assets/om-oss-bild.jpg";
 
 
 export default function AboutTeam() {
