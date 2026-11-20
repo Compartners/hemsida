@@ -32,6 +32,7 @@ import Careers from "./pages/Careers";
 import NotFound from "./pages/NotFound";
 import JobbaHosOss from "./pages/JobbHosOss";
 import ReleaseGate  from "./pages/ReleaseGate";
+import CookieConsent from "./components/CookieConsent";
 
 /* Global */
 
@@ -142,6 +143,7 @@ const App = () => {
         <BrowserRouter>
           <ScrollManager />
           <SessionExpiryListener />
+            <CookieConsent />
           <Routes>
             {/* Main site */}
             <Route
