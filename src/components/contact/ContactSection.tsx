@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, CheckCircle, Mail, Phone } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle, LifeBuoy, Mail, Phone } from "lucide-react";
 
 type ContactFormData = {
   name: string;
@@ -95,30 +95,73 @@ export default function ContactSection() {
 
           <div className="mt-10 space-y-4">
             <a
-              href="tel:0102102700"
-              className="flex items-center gap-3 text-sm text-white/65 transition hover:text-white"
-            >
-              <Phone
-                size={17}
-                strokeWidth={1.7}
-                className="text-[#2CCEC2]"
-              />
+  href="tel:0102102700"
+  className="group flex items-center gap-3 text-sm text-white/65 transition hover:text-white"
+>
+  <span className="relative flex items-center justify-center">
+    {/* ringvågor */}
+    <span className="pointer-events-none absolute inset-0 rounded-full border border-[#2CCEC2] opacity-0 group-hover:animate-[ring-wave_1.2s_ease-out_infinite]" />
+    <span className="pointer-events-none absolute inset-0 rounded-full border border-[#2CCEC2] opacity-0 [animation-delay:0.4s] group-hover:animate-[ring-wave_1.2s_ease-out_infinite]" />
 
-              010-210 27 00
-            </a>
+    <Phone
+      size={17}
+      strokeWidth={1.7}
+      className="text-[#2CCEC2] group-hover:animate-[phone-ring_1.2s_ease-in-out_infinite]"
+    />
+  </span>
 
-            <a
-              href="mailto:info@compartners.se"
-              className="flex items-center gap-3 text-sm text-white/65 transition hover:text-white"
-            >
-              <Mail
-                size={17}
-                strokeWidth={1.7}
-                className="text-[#2CCEC2]"
-              />
+  <span className="relative">
+    010-210 27 00
+    <span className="absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-[#2CCEC2] transition-transform duration-300 group-hover:scale-x-100" />
+  </span>
 
-              info@compartners.se
-            </a>
+  <ArrowUpRight
+    size={14}
+    className="-translate-x-1 opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+  />
+</a>
+
+<a
+  href="mailto:info@compartners.se"
+  className="group flex items-center gap-3 text-sm text-white/65 transition hover:text-white"
+>
+  <Mail
+    size={17}
+    strokeWidth={1.7}
+    className="text-[#2CCEC2] group-hover:animate-[mail-send_1.4s_ease-in-out_infinite]"
+  />
+
+  <span className="relative">
+    info@compartners.se
+    <span className="absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-[#2CCEC2] transition-transform duration-300 group-hover:scale-x-100" />
+  </span>
+
+  <ArrowUpRight
+    size={14}
+    className="-translate-x-1 opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+  />
+</a>
+             
+<a
+  href="mailto:support@compartners.se"
+  className="group flex items-center gap-3 text-sm text-white/65 transition hover:text-white"
+>
+  <LifeBuoy
+    size={17}
+    strokeWidth={1.7}
+    className="text-[#2CCEC2] transition duration-500 group-hover:rotate-180 group-hover:drop-shadow-[0_0_6px_#2CCEC2]"
+  />
+
+  <span className="relative">
+    support@compartners.se
+    <span className="absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-[#2CCEC2] transition-transform duration-300 group-hover:scale-x-100" />
+  </span>
+
+  <ArrowUpRight
+    size={14}
+    className="-translate-x-1 opacity-0 transition duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+  />
+</a>
           </div>
         </div>
 

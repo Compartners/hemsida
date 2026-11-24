@@ -3,6 +3,7 @@ import {
   ArrowUpRight,
   Mail,
   Phone,
+  LifeBuoy,
 } from "lucide-react";
 
 import logoDark from "@/assets/compartners-logo-dark.png";
@@ -102,6 +103,18 @@ const Footer = () => {
                 />
 
                 info@compartners.se
+              </a>
+              <a
+                href="mailto:support@compartners.se"
+                className="flex items-center gap-2.5 text-[#667181] transition hover:text-[#171C25]"
+              >
+                <LifeBuoy
+                  size={16}
+                  strokeWidth={1.7}
+                  className="text-[#0B72FE]"
+                />
+
+                support@compartners.se
               </a>
             </div>
           </div>

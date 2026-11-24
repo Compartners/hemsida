@@ -17,6 +17,7 @@ import {
   FileText,
   Calendar,
   Loader2,
+  LifeBuoy,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
@@ -70,6 +71,12 @@ const contactInfo = [
   },
   {
     icon: Mail,
+    label: "Allmänna frågor",
+    value: "info@compartners.se",
+    href: "mailto:info@compartners.se",
+  },
+    {
+    icon: LifeBuoy,
     label: "Allmänna frågor",
     value: "info@compartners.se",
     href: "mailto:info@compartners.se",
@@ -314,7 +321,20 @@ export default function Contact() {
                     </div>
                   </div>
                 </a>
+                
               ))}
+              <a
+                href="mailto:support@compartners.se"
+                className="flex items-center gap-2.5 text-[#667181] transition hover:text-[#171C25]"
+              >
+                <LifeBuoy
+                  size={16}
+                  strokeWidth={1.7}
+                  className="text-[#0B72FE]"
+                />
+
+                support@compartners.se
+              </a>
             </div>
           </div>
 

@@ -49,3 +49,22 @@ body {
   background: var(--signal-blue);
   color: white;
 }
+
+
+@keyframes phone-ring {
+  0%, 70%, 100% { transform: rotate(0); }
+  10%, 30%, 50% { transform: rotate(-18deg); }
+  20%, 40%, 60% { transform: rotate(18deg); }
+}
+
+@keyframes ring-wave {
+  0%   { transform: scale(0.6); opacity: 0.7; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes mail-send {
+  0%   { transform: translate(0, 0); opacity: 1; }
+  45%  { transform: translate(16px, -16px) scale(0.6); opacity: 0; }
+  46%  { transform: translate(-16px, 16px) scale(0.6); opacity: 0; }
+  100% { transform: translate(0, 0) scale(1); opacity: 1; }
+}
